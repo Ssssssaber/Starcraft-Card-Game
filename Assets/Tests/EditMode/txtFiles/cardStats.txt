@@ -1,0 +1,5 @@
+{"cardStats":{"id":1,"Name":"Dark Templar","Desc":"Cannot be attacked on the first turn","ManaCost":4,"Health":2,"Attack":6,"Race":2,"Type":0},"error":{"errorText":"empty","isError":false}}
+{"cardStats":{"id":7,"Name":"Templar","Desc":"Uses storm when summoned (deals 1 damage in 1 turn to all enemy units, lasts 3 turns)","ManaCost":3,"Health":3,"Attack":1,"Race":2,"Type":0},"error":{"errorText":"empty","isError":false}}
+{"cardStats":{"id":8,"Name":"Ultralisk","Desc":"Deals 2 damage to nearby units","ManaCost":8,"Health":10,"Attack":5,"Race":1,"Type":0},"error":{"errorText":"empty","isError":false}}
+{"cardStats":{"id":8,"Name":"Ultralisk","ManaCost":8,"Health":10,"Attack":5,"Race":1,"Type":0},"error":{"errorText":"empty","isError":false }
+"error":{"errorText":"empty","isError":false }

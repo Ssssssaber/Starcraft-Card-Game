@@ -1,0 +1,2 @@
+{"cardStats":{"id":8,"Name":"Ultralisk","ManaCost":8,"Health":10,"Attack":5,"Race":1,"Type":0},"error":{"errorText":"empty","isError":false }
+"error":{"errorText":"empty","isError":false }

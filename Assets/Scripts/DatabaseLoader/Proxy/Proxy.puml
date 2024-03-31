@@ -1,0 +1,69 @@
+﻿@startuml
+'https://plantuml.com/class-diagram
+
+class CardStatsManagerProxy {
+    private CardStatsManager _cardStatsManager;
+    private List<int> _loadedCardsId;
+    private void Start()
+    public void LoadCards()
+}
+
+interface ICardStatsLoader {
+    public void LoadCards();
+}
+
+class RoutinesQueue {
+         public static Queue<IEnumerator> coroutineQueue;
+         public bool coroutinesRunning;
+         private void Update()
+         private IEnumerator Consecutive(Queue<IEnumerator> coroutines, Action<bool> SetIsRunning)
+    }
+
+class CardStatsManager
+{
+    public string TargetURL;
+    public List<CardStats> LoadedCards;
+    public static CardStatsManager instance;
+    private int _cardsCount;
+    private CardStats _testStats;
+    private CardStats _downloadedCardStats;
+    public UnityEvent OnDownload;
+    public UnityEvent OnUpload;
+    public UnityEvent OnCheckCount;
+    public enum RequestType
+    private void HandleDownload(CardStats downloadedCardStats)
+    public void AddNewCard(CardStats cardStats)
+    private bool IsAlreadyContained(CardStats cardStats)
+    public string GetCardData(CardData cardData)
+    public static CardData SetCardData(string data)
+    public int GetCardsCount()
+
+
+    public void LoadCards()
+
+        
+    public void LoadCard(int i)
+        
+
+    public void UploadCard(string _name, string desc,
+        int manaCost, int health, int attack, Race race, CardType type)
+        
+
+    public void DownloadCard(int id)
+   
+
+    public void CheckCardsCount()
+    
+
+    IEnumerator Loading(WWWForm form, RequestType type)
+
+}
+
+
+    
+CardStatsManager <- CardStatsManagerProxy
+CardStatsManager <- RoutinesQueue
+CardStatsManager -|> ICardStatsLoader
+CardStatsManagerProxy -|> ICardStatsLoader
+   
+@enduml
