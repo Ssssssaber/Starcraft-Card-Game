@@ -202,13 +202,13 @@ public class CardStatsManager : MonoBehaviour, ICardStatsLoader
                 {
                     if (type == RequestType.CheckCardsCount)
                     {
-                        // Debug.Log(www.downloadHandler.text);
+                        Debug.Log(www.downloadHandler.text);
                         _cardsCount = Int32.Parse(www.downloadHandler.text);
                         OnCheckCount?.Invoke();
                     }
                     else if (type == RequestType.DownloadAll)
                     {
-                        // Debug.Log(www.downloadHandler.text);
+                        Debug.Log(www.downloadHandler.text);
                         // Debug.Log(www.downloadHandler.text);
                         _cardsCount = Int32.Parse(www.downloadHandler.text);
                         OnCheckCount?.Invoke();

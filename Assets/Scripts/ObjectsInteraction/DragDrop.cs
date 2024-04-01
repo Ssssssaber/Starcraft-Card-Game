@@ -8,7 +8,6 @@ public class DragDrop : MonoBehaviour
     public PlayerManaComponent playerManaComponent;
     // public PlayerManager player;
     private Card _card;
-    
     [SerializeField] private bool _isDragging = false;
     
     [Header("In hand parameters")]
@@ -91,19 +90,23 @@ public class DragDrop : MonoBehaviour
             {
                 transform.position = _startPosition;
                 transform.SetParent(_startParent.transform, false);
-                
             }
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (collision.gameObject.GetComponent<TableBehaviour>().Team != _card.Team)
+            return;
+
         _isOverDropZone = true;
         _dropZone = collision.gameObject;
     }
     
     private void OnCollisionExit2D(Collision2D collision)
     {
+        // if (collision.gameObject.GetComponent<TableBehaviour>().Team != _card.Team)
+        //     return;
         _isOverDropZone = false;
         _dropZone = null;
     }

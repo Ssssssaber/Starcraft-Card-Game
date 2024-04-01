@@ -22,8 +22,13 @@ using UnityEngine.Events;
         public readonly static UnityEvent<CardStats> OnCardLoaded = new UnityEvent<CardStats>();
         public readonly static UnityEvent<List<CardStats>> OnAllCardsLoaded = new UnityEvent<List<CardStats>>();
         public readonly static UnityEvent OnDatabaseCreated = new UnityEvent();
+        public readonly static UnityEvent OnTurnPreparetionsEnded = new UnityEvent();
         // public static UnityEvent OnAnyCardPlayed = new UnityEvent();
-        
+
+        public static void OnTurnPreparetionsEnd()
+        {
+            OnTurnPreparetionsEnded?.Invoke();
+        }
   
         public static void CardLoaded(CardStats cardStats)
         {

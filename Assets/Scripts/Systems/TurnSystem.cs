@@ -103,7 +103,7 @@ public class TurnSystem : MonoBehaviour
     
     private void Start()
     {
-        endTurnButton.onClick.AddListener(OnClick);
+        // endTurnButton.onClick.AddListener(OnClick);
         isBottomPlayerTurn = true;
         EventManager.OnPlayerTurnEnd.AddListener(EndPlayerTurn);
         EventManager.OnOpponentTurnEnd.AddListener(EndOpponentTurn);
@@ -135,6 +135,18 @@ public class TurnSystem : MonoBehaviour
         }
 
         UpdateTurnStats();
+    }
+
+    public void SwitchTurn()
+    {
+        if (isBottomPlayerTurn)
+        {
+            EndPlayerTurn();
+        }
+        else 
+        {
+            EndOpponentTurn();
+        }
     }
 
     public void EndPlayerTurn()

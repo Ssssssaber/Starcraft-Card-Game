@@ -22,16 +22,15 @@ public class PlayerManager : MonoBehaviour
     public bool isManuallyControlled = true;
     private void Awake()
     {
-        
         AI = GetComponentInChildren<OpponentBehaviour>();
-        if (AI != null)
-        {
-            isManuallyControlled = false;
-        }
-        else
-        {
-            isManuallyControlled = true;
-        }
+        // if (AI == null)
+        // {
+        //     isManuallyControlled = false;
+        // }
+        // else
+        // {
+        //     isManuallyControlled = true;
+        // }
 
         Hero = GetComponentInChildren<HeroBehaviour>();
         ManaComponent = GetComponentInChildren<PlayerManaComponent>();
