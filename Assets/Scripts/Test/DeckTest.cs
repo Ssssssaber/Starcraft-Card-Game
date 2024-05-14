@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Codice.CM.SEIDInfo;
 using UnityEngine;
-using System;
-using System.Reflection;
-using GOAP_System;
-using System.Linq;
 namespace DefaultNamespace.Test
 {
     public class DeckTest : MonoBehaviour

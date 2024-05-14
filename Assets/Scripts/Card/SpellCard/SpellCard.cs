@@ -1,13 +1,8 @@
-﻿using Interfaces;
-using PlasticPipe.Server;
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Serialization;
+﻿
 using static GameUtilities;
 using System;
 using System.Reflection;
 using GOAP_System;
-using TMPro;
 
 public class SpellCard : Card
 {

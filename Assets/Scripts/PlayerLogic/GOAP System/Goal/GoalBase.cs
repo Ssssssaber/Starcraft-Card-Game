@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using DefaultNamespace;
-using Interfaces;
+﻿using Interfaces;
 using UnityEngine;
 
 public abstract class GoalBase : MonoBehaviour, IGoal
@@ -14,7 +11,10 @@ public abstract class GoalBase : MonoBehaviour, IGoal
 
     private void Awake()
     {
-        DebugUI =  GameObject.Find("GoapUI").GetComponent<ManagerGOAPUI>();
+        if (GameObject.Find("GoapUI") != null)
+        {
+            DebugUI =  GameObject.Find("GoapUI").GetComponent<ManagerGOAPUI>();
+        }
         player = GetComponentInParent<PlayerManager>();
         if (!player.isManuallyControlled)
         {
@@ -38,13 +38,16 @@ public abstract class GoalBase : MonoBehaviour, IGoal
     
     public virtual void UpdateGoalStats()
     {
-         GoalStatus status = GoalStatus.Paused;
+        GoalStatus status = GoalStatus.Paused;
         
         if (LinkedAction != null)
         {
             status = GoalStatus.Running;
         }
-        DebugUI.UpdateGoal(player, this, GetType().Name, CalculatePriority(), status);
+        if (DebugUI != null)
+        {
+            DebugUI.UpdateGoal(player, this, GetType().Name, CalculatePriority(), status);
+        }
     }
     
     public virtual void OnGoalTick()

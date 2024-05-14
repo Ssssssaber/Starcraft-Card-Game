@@ -1,5 +1,4 @@
-﻿using PlasticGui.WorkspaceWindow;
-
+﻿
 namespace Interfaces
 {
     public interface IGoal

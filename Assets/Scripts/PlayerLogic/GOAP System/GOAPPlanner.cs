@@ -1,7 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-
 namespace GOAP_System
 {
     public class GOAPPlanner : MonoBehaviour

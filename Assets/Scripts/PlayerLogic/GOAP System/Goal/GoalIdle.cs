@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using GOAP_System.Action;
+﻿
 using UnityEngine;
 
 namespace GOAP_System.Goal

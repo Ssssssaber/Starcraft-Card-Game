@@ -50,15 +50,16 @@ public enum OpponentState
 
             planner = GetComponent<GOAPPlanner>();
             team = player.Team;
-            if (team == Team.Opponent)
+            if (team == Team.Player)
             {
-                EventManager.OnPlayerTurnEnd.AddListener(StartAiTurn);
+                EventManager.OnOpponentTurnEndAfter.AddListener(StartAiTurn);
+                StartAiTurn();
             }
             else 
             {
-                EventManager.OnOpponentTurnEnd.AddListener(StartAiTurn);
+                EventManager.OnPlayerTurnEndAfter.AddListener(StartAiTurn);
             }
-            StartAiTurn();
+            
         }
 
         public void StartAiTurn()
@@ -70,13 +71,11 @@ public enum OpponentState
         {
             yield return new WaitForSeconds(1f);
             StartCoroutine("PlaceCards");
-            // TryPlaceCardWithStrategy();
             yield return new WaitForSeconds(1f);
             ActionBase action = planner.ChooseAction();
 
             if (action != null)
             {
-                // Debug.Log(action.GetType());
                 action.OnTick();
             }
             else
@@ -84,16 +83,7 @@ public enum OpponentState
                 Debug.Log("ti");
             }
 
-            if (player.Team == Team.Player)
-            {
-                EventManager.PlayerTurnEnded();
-            }
-            else
-            {
-                EventManager.OpponentTurnEnded();
-            }
-
-            TurnSystem.instance.UpdateTurnStats();
+            TurnSystem.instance.SwitchTurn();
         }
 
         private IEnumerator PlaceCards()
@@ -111,38 +101,41 @@ public enum OpponentState
         private Card ChooseCardToPlay()
         {
             _opponentHandEmpty = hand.CardsList.Count == 0;
-            
 
             if (!_opponentHandEmpty)
             {
-                // List<Card> sortedCards = new List<Card>(OpponentHand.CardsList);
                 IEnumerable<string> names = hand.CardsList.Select(card => card.Name);
-                // Debug.Log(names);
                 IEnumerable<Card> sortedCards = hand.CardsList.OrderByDescending(card => card.PlayPriority);
-                var oppCards = sortedCards.ToList();
-                names = oppCards.Select(card => card.Name);
+                var handCards = sortedCards.ToList();
+                names = handCards.Select(card => card.Name);
                 string dbg = "";
-                foreach(var card in oppCards)
+                foreach(var card in handCards)
                 {
                     dbg += card.Name + ":  " + card.PlayPriority + "; ";
                 }
-                Debug.Log(dbg);
+                Debug.Log($"{player.Team}: {dbg}");
                 Card bestCard = null;
-                foreach (Card oppCard in oppCards)
+                foreach (Card card in handCards)
                 {
-                    if (oppCard.PlayPriority == -1)
+                    // if no reason to play this card
+                    if (card.PlayPriority == -1)
                     {
                         continue;
                     }
+                    // if cannot play this card
+                    if (!(mana.currentMana >= card.ManaComponent.Mana && table.GetCount() < table.maxCardsOnTable))
+                    {
+                        continue;
+                    }
+
                     if (bestCard == null)
                     {
-                        bestCard = oppCard;
+                        bestCard = card;
                     }
-                    else if (mana.currentMana >= oppCard.ManaComponent.Mana &&
-                        table.GetCount() < table.maxCardsOnTable &&
-                        bestCard.PlayPriority < oppCard.PlayPriority)
+
+                    else if (bestCard.PlayPriority < card.PlayPriority)
                     {
-                        bestCard = oppCard;
+                        bestCard = card;
                     }
                 }
                 return bestCard;
@@ -151,29 +144,32 @@ public enum OpponentState
             return null;
         }
 
-        private void PlaceChosenCard(Card oppCard)
+        private void PlaceChosenCard(Card card)
         {
-            if (oppCard.Type == CardType.Creature)
+            if (card.Type == CardType.Creature)
             {
-                oppCard.transform.SetParent(table.transform, false);
-                CreatureCard temp = oppCard.GetComponent<CreatureCard>();
+                card.transform.SetParent(table.transform, false);
+                CreatureCard temp = card.GetComponent<CreatureCard>();
                 temp.CanAttack = false;
             }
-            oppCard.SetGoapGOVisible(false);
-            oppCard.IsDraggable = false;
-            oppCard.State = CardState.OnTable;
-            oppCard.FaceCardDown(false);
-            _playedCards.Add(oppCard);
+            card.SetGoapGOVisible(false);
+            card.IsDraggable = false;
+            card.State = CardState.OnTable;
+            card.FaceCardDown(false);
+            _playedCards.Add(card);
             if (player.Team == Team.Player)
             {
-                EventManager.PlayerCardPlayed(oppCard);
+                EventManager.PlayerCardPlayed(card);
             }
             else
             {
-                EventManager.OpponentCardPlayed(oppCard);
+                EventManager.OpponentCardPlayed(card);
             }
-            oppCard.CardPlayed?.Invoke();
-            hand.RemoveCard(oppCard);
+
+            Notify($"played {card.Name}");
+
+            card.CardPlayed?.Invoke();
+            hand.RemoveCard(card);
         }
         public IEnumerator GoFace()
         {
@@ -194,13 +190,13 @@ public enum OpponentState
         // think of cards that can attack multiple times
         public IEnumerator TradeThenGoFace()
         {
-            Debug.Log("TradeThenGoFace");
-            List<CreatureCard> opponentTableCards = new List<CreatureCard>(table.GetCardsList());
+            Notify("TradeThenGoFace");
+            List<CreatureCard> tableCards = new List<CreatureCard>(table.GetCardsList());
             
-            foreach (CreatureCard oppCard in opponentTableCards)
+            foreach (CreatureCard card in tableCards)
             {
                 _playerTableEmpty = opponentTable.GetCount() == 0;
-                if (oppCard.CanAttack)
+                if (card.CanAttack)
                 {
                     if (!_playerTableEmpty)
                     {
@@ -219,8 +215,11 @@ public enum OpponentState
 
                             if (targetCardHealth.Health > 0)
                             {
-                                oppCard.AttackCard(targetCard);
-                                oppCard.CardEffects.ImplementOnTargetEffect(targetCardHealth);
+                                card.AttackCard(targetCard);
+                                card.CardEffects.ImplementOnTargetEffect(targetCardHealth);
+                                
+                                Notify($"{card.Name} attacks {targetCard.Name}");
+                                
                                 yield return new WaitForSeconds(cardAttackDelay);
                             }
                         }
@@ -228,7 +227,8 @@ public enum OpponentState
                 
                     else
                     {
-                        DamageHero(opponentHero, oppCard);
+                        DamageHero(opponentHero, card);
+                        Notify($"{card.Name} attacks {opponentHero.Team}");
                         yield return new WaitForSeconds(cardAttackDelay);
                     }
                 }
@@ -243,5 +243,11 @@ public enum OpponentState
                 opponentHero.HealthComponent.Damage(oppCard.AttackComponent.Attack);
                 // Debug.Log("damagehero");
             }
+        }
+
+
+        private void Notify(string message)
+        {
+            Debug.Log($"{player.Team} : {message}");
         }
     }

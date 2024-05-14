@@ -240,8 +240,11 @@ public class OnPlayEffectsMethods
 
     public void WildMutation(SpellCard attachedCard)
     {
-        AOESpell(attachedCard.AttackComponent.Attack, attachedCard.ownerPlayer, BuffCardHealth);
-        AOESpell(attachedCard.AttackComponent.Attack, attachedCard.ownerPlayer, IncreaseCardAttack);
+        // AOESpell(attachedCard.AttackComponent.Attack, attachedCard.ownerPlayer, BuffCardHealth);
+        // AOESpell(attachedCard.AttackComponent.Attack, attachedCard.ownerPlayer, IncreaseCardAttack);
+        
+        AOESpell(1, attachedCard.ownerPlayer, BuffCardHealth);
+        AOESpell(1, attachedCard.ownerPlayer, IncreaseCardAttack);
     }
 
     public void Transcendence(SpellCard attachedCard)
@@ -287,11 +290,11 @@ public class OnTurnEffectsMethods
     
     public void Storm(Card attachedCard)
     {
-        AOESpell(attachedCard.AttackComponent.Attack, attachedCard.ownerPlayer.OpposingPlayer, DamageCard);
+        AOESpell(2, attachedCard.ownerPlayer.OpposingPlayer, DamageCard);
     }
 
     public void Transfuse(Card attachedCard)
     {
-        AOESpell(attachedCard.AttackComponent.Attack, attachedCard.ownerPlayer, HealCard);
+        AOESpell(1, attachedCard.ownerPlayer, HealCard);
     }
 }

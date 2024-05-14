@@ -83,7 +83,14 @@ public class DragDrop : MonoBehaviour
                 _card.IsDraggable = false;
                 _card.State = CardState.OnTable;
                 
-                EventManager.PlayerCardPlayed(_card);
+                if (_card.Team == Team.Player)
+                {
+                    EventManager.PlayerCardPlayed(_card);
+                }
+                else 
+                {
+                    EventManager.OpponentCardPlayed(_card);
+                }
                 _card.CardPlayed?.Invoke();
             }
             else

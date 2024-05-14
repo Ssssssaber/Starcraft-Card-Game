@@ -1,9 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using XDiffGui;
 
 public class GoalUI : MonoBehaviour
 {

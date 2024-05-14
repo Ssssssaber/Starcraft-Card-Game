@@ -1,4 +1,4 @@
-﻿using UnityEditor.SceneTemplate;
+﻿
 using UnityEngine;
 
 namespace DefaultNamespace.Factory

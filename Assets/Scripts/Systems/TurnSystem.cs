@@ -63,9 +63,7 @@ public class TurnSystem : MonoBehaviour
 
     private void ImplementTurnEffects(ref List<TurnEffect> effects)
     {
-        // Debug.Log(_playerTurnEffects);
         List<TurnEffect> expiredEffects = new List<TurnEffect>();
-        // PrintTurnEffectsInfo(effects);
         foreach (var effect in effects)
         {
             switch (effect.Duration)
@@ -105,37 +103,28 @@ public class TurnSystem : MonoBehaviour
     {
         // endTurnButton.onClick.AddListener(OnClick);
         isBottomPlayerTurn = true;
-        EventManager.OnPlayerTurnEnd.AddListener(EndPlayerTurn);
-        EventManager.OnOpponentTurnEnd.AddListener(EndOpponentTurn);
+        // EventManager.OnPlayerTurnEnd.AddListener(EndPlayerTurn);
+        // EventManager.OnOpponentTurnEnd.AddListener(EndOpponentTurn);
         opponent.ManaComponent.RefreshManaOnTurn();
         player.ManaComponent.RefreshManaOnTurn();
     }
 
     public void UpdateTurnStats()
     {
+        
         if (isBottomPlayerTurn)
         {
-            TurnText.text = "Your turn";
+            TurnCount += 1;
+            TurnText.text = $"Your turn {TurnCount}";
             buttonText.text = "End your turn";
         }
         else
         {
-            TurnText.text = "Opponent's turn";
+            TurnText.text = $"Opponents turn {TurnCount}";
             buttonText.text = "End opponent's turn";
         }
-
-        TurnCount += 1;
     }
 
-    public void OnClick()
-    {
-        if (isBottomPlayerTurn)
-        {
-            EventManager.PlayerTurnEnded();
-        }
-
-        UpdateTurnStats();
-    }
 
     public void SwitchTurn()
     {
@@ -147,17 +136,21 @@ public class TurnSystem : MonoBehaviour
         {
             EndOpponentTurn();
         }
+
+        UpdateTurnStats();
     }
 
     public void EndPlayerTurn()
     {
         isBottomPlayerTurn = false;
+        EventManager.PlayerTurnEnded();
         EndTurn(player, ref _opponentTurnEffects);
     }
 
     public void EndOpponentTurn()
     {
         isBottomPlayerTurn = true;
+        EventManager.OpponentTurnEnded();
         EndTurn(opponent, ref _playerTurnEffects);    
     }
 
@@ -171,6 +164,7 @@ public class TurnSystem : MonoBehaviour
         {
             player.OpposingPlayer.Hand.RefreshDragAbility();
         }
+
         player.Table.DisableAttackAbility();
         player.OpposingPlayer.Table.RefreshAttackAbility();
         player.OpposingPlayer.ManaComponent.RefreshManaOnTurn();

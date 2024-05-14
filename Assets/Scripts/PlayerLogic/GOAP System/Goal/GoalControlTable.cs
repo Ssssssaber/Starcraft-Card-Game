@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using DefaultNamespace;
 using UnityEngine;
-using UnityEngine.Serialization;
 using MockObjects;
 // using static BoardAwareness;
 public class GoalControlTable : GoalBase

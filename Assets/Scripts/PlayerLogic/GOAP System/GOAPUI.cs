@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Codice.CM.SEIDInfo;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;

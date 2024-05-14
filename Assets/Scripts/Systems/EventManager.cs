@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using log4net.Core;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using UnityEngine.Events;
 
 
@@ -17,6 +12,7 @@ using UnityEngine.Events;
         public readonly static UnityEvent<Card> OnPlayerCardDealt = new UnityEvent<Card>();
         public readonly static UnityEvent<Card> OnPlayerCardPlayed = new UnityEvent<Card>();
         public readonly static UnityEvent OnPlayerTurnEnd = new UnityEvent();
+        public readonly static UnityEvent OnPlayerTurnEndAfter = new UnityEvent();
         
         // random garbage
         public readonly static UnityEvent<CardStats> OnCardLoaded = new UnityEvent<CardStats>();
@@ -70,6 +66,7 @@ using UnityEngine.Events;
         public static void PlayerTurnEnded()
         {
             OnPlayerTurnEnd?.Invoke();
+            OnPlayerTurnEndAfter?.Invoke();
             OnEnvironmentChange?.Invoke();
             // GetMethodNames(OnPlayerCardPlayed);
         }
@@ -79,6 +76,7 @@ using UnityEngine.Events;
         public readonly static UnityEvent<Card> OnOpponentCardPlayed = new UnityEvent<Card>();
         public readonly static UnityEvent<Card> OnCardRemovedFromTable = new UnityEvent<Card>();
         public readonly static UnityEvent OnOpponentTurnEnd = new UnityEvent();
+        public readonly static UnityEvent OnOpponentTurnEndAfter = new UnityEvent();
         
         // Opponent functions
         public static void OpponentCardDealt(Card card)
@@ -96,6 +94,7 @@ using UnityEngine.Events;
         public static void OpponentTurnEnded()
         {
             OnOpponentTurnEnd?.Invoke();
+            OnOpponentTurnEndAfter?.Invoke();
             OnEnvironmentChange?.Invoke();
         }
     }

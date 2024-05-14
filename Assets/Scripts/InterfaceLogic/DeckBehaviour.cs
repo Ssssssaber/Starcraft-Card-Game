@@ -86,7 +86,6 @@ public class DeckBehaviour : MonoBehaviour
 
     private void CreateDeck()
     {
-        EventManager.OnPlayerTurnEnd.AddListener(Draw);
         attachedHand = player.Hand;
         if (Team == Team.Player)
         {
@@ -297,6 +296,19 @@ public class DeckBehaviour : MonoBehaviour
 
     public void CreateDeckFromString(String deckString)
     {
+         switch (player.Race)
+        {
+            case (Race.Protoss):
+                _factory = new ProtossCardFactory();
+                break;
+            case (Race.Zerg):
+                _factory = new ZergCardFactory();
+                break;
+            case (Race.Terran):
+                Debug.Log("hue");
+                throw new Exception("hue");
+        }
+        
         deckString = DecodeAsci(deckString);
         deckString = deckString.Remove(deckString.Length - 1);
         
