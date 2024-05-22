@@ -8,7 +8,7 @@ using PlayerLogic.CardPlacementStrategy;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
-using RSG;
+// using RSG;
 
 public enum OpponentState
 {
