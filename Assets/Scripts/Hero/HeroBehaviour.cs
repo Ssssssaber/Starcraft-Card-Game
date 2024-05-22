@@ -24,7 +24,7 @@ public class HeroBehaviour : MonoBehaviour
     private void Start()
     {
         player = GetComponentInParent<PlayerManager>();
-        _awareness = BoardAwareness.awareness;
+        _awareness = BoardAwareness.Instance;
         HealthComponent.OnChange.AddListener(UpdateHealth);
 
         if (Team == Team.Opponent)

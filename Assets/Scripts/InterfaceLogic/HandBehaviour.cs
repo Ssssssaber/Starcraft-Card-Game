@@ -17,6 +17,16 @@ public class HandBehaviour : MonoBehaviour
         } 
     }
 
+    public List<Card> GetCardsList()
+    {
+        return CardsList;
+    }
+
+    public int GetCount()
+    {
+        return CardsList.Count;
+    }
+
     private HandState _handState;
 
     private void Start()

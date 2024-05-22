@@ -17,7 +17,7 @@ public class TurnSystem : MonoBehaviour
 
     public Button endTurnButton;
     public TextMeshProUGUI buttonText;
-    public static int TurnCount = 0;
+    private int TurnCount = 0;
     [FormerlySerializedAs("manaText")] public TextMeshProUGUI PlayerManaText;
     public TextMeshProUGUI OpponentManaText;
     public static TurnSystem instance;
@@ -27,8 +27,8 @@ public class TurnSystem : MonoBehaviour
     private List<TurnEffect> _opponentTurnEffects = new List<TurnEffect>();
     private void Awake()
     {
-        player = BoardAwareness.awareness.player;
-        opponent = BoardAwareness.awareness.opponent;
+        player = BoardAwareness.Instance.player;
+        opponent = BoardAwareness.Instance.opponent;
         if (instance != null && instance != this)
         {
             Debug.Log("You are trying to create another turn system gameobject");
@@ -38,6 +38,11 @@ public class TurnSystem : MonoBehaviour
         {
             instance = this;
         }
+    }
+
+    public int GetTurnCount()
+    {
+        return TurnCount;
     }
 
     public void AddOpponentTurnEffect(TurnEffect effect)

@@ -15,12 +15,12 @@ public class DragDrop : MonoBehaviour
     private Vector2 _startPosition;
     private GameObject _dropZone;
     private bool _isOverDropZone;
-    private BoardAwareness _awareness = BoardAwareness.awareness;
+    private BoardAwareness _awareness = BoardAwareness.Instance;
    
     // Start is called before the first frame update
     private void Start()
     {
-        _awareness = BoardAwareness.awareness;
+        _awareness = BoardAwareness.Instance;
         _card = GetComponent<Card>();
         Canvas = _awareness.MainCanvas.gameObject;
 
@@ -56,7 +56,10 @@ public class DragDrop : MonoBehaviour
     {      
         if (_isDragging && _card.IsDraggable)
         {
-            transform.position = Input.mousePosition;
+            // transform.position = Input.mousePosition;
+            // transform.position = 
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            transform.position = new Vector3(mousePos.x, mousePos.y, 0);
             transform.SetParent(Canvas.transform, true);
         }
     }

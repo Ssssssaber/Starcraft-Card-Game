@@ -4,10 +4,10 @@ namespace PlayerLogic.CardPlacementStrategy
 {
     public class PlayExpensiveCardStrategy : IPlayCardStrategy
     {
-        private BoardAwareness _awareness = BoardAwareness.awareness;
+        private BoardAwareness _awareness = BoardAwareness.Instance;
         public Card Execute(List<Card> cardsList)
         {
-            _awareness = BoardAwareness.awareness;
+            _awareness = BoardAwareness.Instance;
             
             Card resultCard = cardsList[0];
             foreach (Card card in cardsList)

@@ -18,14 +18,16 @@ using UnityEngine.Events;
         public readonly static UnityEvent<CardStats> OnCardLoaded = new UnityEvent<CardStats>();
         public readonly static UnityEvent<List<CardStats>> OnAllCardsLoaded = new UnityEvent<List<CardStats>>();
         public readonly static UnityEvent OnDatabaseCreated = new UnityEvent();
-        public readonly static UnityEvent OnTurnPreparetionsEnded = new UnityEvent();
+        public readonly static UnityEvent OnGameEnded = new UnityEvent();
         // public static UnityEvent OnAnyCardPlayed = new UnityEvent();
 
-        public static void OnTurnPreparetionsEnd()
+        public readonly static UnityEvent OnPlayerTurnStart = new UnityEvent();
+
+        public static void PlayerTurnStarted()
         {
-            OnTurnPreparetionsEnded?.Invoke();
+            OnPlayerTurnStart?.Invoke();
         }
-  
+        
         public static void CardLoaded(CardStats cardStats)
         {
             OnCardLoaded?.Invoke(cardStats);
@@ -42,6 +44,11 @@ using UnityEngine.Events;
         {
             IsDatabaseCreated = true;
             OnDatabaseCreated?.Invoke();
+        }
+
+        public static void GameEnded()
+        {
+            OnGameEnded?.Invoke();
         }
         
         // Player functions

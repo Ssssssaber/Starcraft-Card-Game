@@ -61,7 +61,7 @@ public class SelectionSystem : MonoBehaviour
     }
     private void Start()
     {
-        _awareness = BoardAwareness.awareness;
+        _awareness = BoardAwareness.Instance;
         Canvas = GameObject.Find("Main Canvas");
         raycaster = Canvas.GetComponent<GraphicRaycaster>();
         clickData = new PointerEventData(EventSystem.current);

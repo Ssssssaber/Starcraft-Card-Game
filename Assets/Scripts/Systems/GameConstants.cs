@@ -2,6 +2,8 @@
 using System.Linq;
 using UnityEngine;
 using System.Text;
+using Codice.Client.Common;
+using System.Collections.Generic;
 
 
 
@@ -26,8 +28,13 @@ public class GameUtilities : MonoBehaviour
     private static Sprite _baseCardImage;
     public static int CARD_WEIGHT = 5;
     public static int MAX_HAND_CAPACITY = 7;
+    public static int MAX_TABLE_CAPACITY = 7;
     public static int START_CARD_COUNT = 3;
 
+    public static void PrintArray<T>(IEnumerable<T> array)
+    {
+        Debug.Log(String.Join("; ", array.Select(value => value.ToString()).ToArray()));
+    }
 
     public static string CapitalizeRemoveSpaces(string line)
     {

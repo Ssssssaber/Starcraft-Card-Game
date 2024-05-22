@@ -13,7 +13,7 @@ namespace DefaultNamespace
         private Flyweight.Flyweight _flyweight;
         private void Start()
         {
-            _awareness = BoardAwareness.awareness;
+            _awareness = BoardAwareness.Instance;
             _playerFactory = AssignFactory(_awareness.player.Race);
             _opponentFactory = AssignFactory(_awareness.opponent.Race);
             // _playerFactory = AssignFactory(aw)

@@ -79,7 +79,7 @@ public class DeckBehaviour : MonoBehaviour
 
     public void Awake()
     {
-        _awareness = BoardAwareness.awareness;
+        _awareness = BoardAwareness.Instance;
         player = GetComponentInParent<PlayerManager>();
         EventManager.OnDatabaseCreated.AddListener(CreateDeck);
     }
@@ -203,6 +203,8 @@ public class DeckBehaviour : MonoBehaviour
             // Debug.Log($"{Team} {Deck.Count}");
             Draw();
         }
+
+        EventManager.PlayerTurnStarted();
     }
 
     public void DrawCards(int amount)

@@ -6,7 +6,7 @@ namespace GOAP_System
 {
     public class CardCostCalculation
     {
-        private BoardAwareness _awareness = BoardAwareness.awareness; 
+        private BoardAwareness _awareness = BoardAwareness.Instance; 
         public int Transfuse(PlayerManager player)
         {
             IEnumerable<CreatureCard> missingHealthCards = player.Table.GetCardsList()

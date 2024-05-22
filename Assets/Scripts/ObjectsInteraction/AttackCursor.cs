@@ -7,7 +7,7 @@ using UnityEngine.Events;
     {
         public GameObject Canvas;
         // public static UnityEvent<bool> OnCursorToggle = new UnityEvent<bool>();
-        BoardAwareness _awareness = BoardAwareness.awareness;
+        BoardAwareness _awareness = BoardAwareness.Instance;
         public bool Displayed
         {
             get
@@ -25,7 +25,7 @@ using UnityEngine.Events;
         
         private void Start()
         {
-            _awareness = BoardAwareness.awareness;
+            _awareness = BoardAwareness.Instance;
             Canvas = _awareness.MainCanvas.gameObject;
             // OnCursorToggle.AddListener(ToggleCursor);
         }
@@ -34,7 +34,9 @@ using UnityEngine.Events;
         {
             if (Displayed)
             {
-                transform.position = Input.mousePosition;
+                // transform.position = Input.mousePosition;
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                transform.position = new Vector3(mousePos.x, mousePos.y, 0);
                 transform.SetParent(Canvas.transform);
             }
         }

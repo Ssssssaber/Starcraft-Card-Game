@@ -12,7 +12,7 @@ public class GoalControlTable : GoalBase
     protected List<System.Type> supportedActions = new List<Type>() {typeof(ActionTradeCards)};
     private void Start()
     {
-        _awareness = BoardAwareness.awareness;
+        _awareness = BoardAwareness.Instance;
     }
 
     private List<System.Type> _suitableActions = new List<System.Type>() { typeof(ActionTradeCards) };

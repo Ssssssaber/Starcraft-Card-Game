@@ -10,7 +10,7 @@ public class TableBehaviour : MonoBehaviour
     private List<CreatureCard> _cardsList = new List<CreatureCard>();
     public Team Team;
     
-    public readonly int maxCardsOnTable = 5;
+    public readonly int maxCardsOnTable = GameUtilities.MAX_TABLE_CAPACITY;
     
 
     private void SetupCardsList()

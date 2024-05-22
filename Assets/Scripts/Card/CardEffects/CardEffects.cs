@@ -9,7 +9,7 @@ using static CardEffectsBaseMethods;
 
 public static class CardEffectsBaseMethods
 {
-    private static BoardAwareness _awareness = BoardAwareness.awareness;
+    private static BoardAwareness _awareness = BoardAwareness.Instance;
     public static void AOESpell(int interactionAmount, PlayerManager player, Action<CreatureCard, int> action)
     {
         foreach (var card in new List<CreatureCard>(player.Table.GetCardsList()))

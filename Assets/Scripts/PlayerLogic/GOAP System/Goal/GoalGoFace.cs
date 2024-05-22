@@ -8,7 +8,7 @@ public class GoalGoFace : GoalBase
 
     private void Start()
     {
-        _awareness = BoardAwareness.awareness;
+        _awareness = BoardAwareness.Instance;
     }
 
 

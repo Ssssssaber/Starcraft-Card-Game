@@ -10,7 +10,7 @@ namespace PlayerLogic.CardPlacementStrategy
         private BoardAwareness _awareness;
         public Card Execute(List<Card> cardsList)
         {
-            _awareness = BoardAwareness.awareness;
+            _awareness = BoardAwareness.Instance;
             
             Card resultCard = cardsList[0];
             foreach (Card card in cardsList)

@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Serialization;
 public class BoardAwareness : MonoBehaviour
 {
-    public static BoardAwareness awareness
+    public static BoardAwareness Instance
     {
         get;
         private set;
@@ -15,7 +16,9 @@ public class BoardAwareness : MonoBehaviour
 
     public CreatureCard SelectedCard;
     public CreatureCard TargetCard;
-    
+
+    public TurnSystem TurnSystem;
+
     private void Awake()
     {
         SetSingletone();
@@ -23,14 +26,40 @@ public class BoardAwareness : MonoBehaviour
 
     private void SetSingletone()
     {
-        if (awareness == null)
+        if (Instance == null)
         {
-            awareness = this;
+            Instance = this;
         }
         else
         {
             Destroy(this);
         }
     }
+
+
+    public List<float> GetPlayerTableCards(PlayerManager player)
+    {
+        return player.GetTableCardIds();
+    }
     
+    public List<float> GetPlayerHandCards(PlayerManager player)
+    {
+        return player.GetHandCardIds();
+    }
+    
+    public int GetPlayerTableCardsCount(PlayerManager player)
+    {
+        return player.GetTableCardsCount();
+    }
+    
+    public int GetPlayerHandCardsCount(PlayerManager player)
+    {
+        return player.GetHandCardsCount();
+    }
+
+    public int GetPlayerManaPoints(PlayerManager player)
+    {
+        return player.GetManaPoints();
+    }
+
 }
