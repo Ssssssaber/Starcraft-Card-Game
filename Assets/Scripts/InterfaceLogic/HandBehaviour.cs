@@ -6,7 +6,7 @@ using UnityEngine.XR;
 
 public class HandBehaviour : MonoBehaviour
 {
-    public List<Card> CardsList = new List<Card>();
+    public List<Card> _cardsList = new List<Card>();
     public Team Team;
     public HandState State {
         get => _handState;
@@ -19,12 +19,12 @@ public class HandBehaviour : MonoBehaviour
 
     public List<Card> GetCardsList()
     {
-        return CardsList;
+        return _cardsList;
     }
 
     public int GetCount()
     {
-        return CardsList.Count;
+        return _cardsList.Count;
     }
 
     private HandState _handState;
@@ -32,6 +32,7 @@ public class HandBehaviour : MonoBehaviour
     private void Start()
     {
         State = new EmptyState();
+        EventManager.OnBoardInitialized.AddListener(ResetHand);
         if (Team == Team.Opponent)
         {
             EventManager.OnOpponentCardDealt.AddListener(AddCard);
@@ -44,6 +45,15 @@ public class HandBehaviour : MonoBehaviour
         }
     }
 
+    private void ResetHand()
+    {
+        foreach (var card in _cardsList)
+        {
+            Destroy(card.gameObject);
+        }
+        _cardsList = new List<Card>();
+    }
+
     private void HandleState()
     {
         State.Handle(this);
@@ -52,7 +62,7 @@ public class HandBehaviour : MonoBehaviour
     public void AddCard(Card card)
     {
         HandleState();
-        CardsList.Add(card);
+        _cardsList.Add(card);
         if (Team == Team.Opponent)
         {
             card.IsDraggable = false;
@@ -62,12 +72,12 @@ public class HandBehaviour : MonoBehaviour
     public void RemoveCard(Card card)
     {
         HandleState();
-        CardsList.Remove(card);
+        _cardsList.Remove(card);
     }
     
     public void RefreshDragAbility()
     {
-        foreach (var card in CardsList)
+        foreach (var card in _cardsList)
         {
             card.IsDraggable = true;
         }
@@ -75,7 +85,7 @@ public class HandBehaviour : MonoBehaviour
     
     public void DisableDragAbility()
     {
-        foreach (var card in CardsList)
+        foreach (var card in _cardsList)
         {
             card.IsDraggable = false;
         }
@@ -83,7 +93,7 @@ public class HandBehaviour : MonoBehaviour
 
     public int GetCardsCount()
     {
-        return CardsList.Count;
+        return _cardsList.Count;
     }
 
 }

@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 using static GameUtilities;
+using TMPro;
 
 
 public class DeckBehaviour : MonoBehaviour
@@ -40,21 +41,26 @@ public class DeckBehaviour : MonoBehaviour
     private int _maxCardAmount = MAX_HAND_CAPACITY;
     private int _startCardAmount = START_CARD_COUNT;
 
+    [SerializeField] private TMP_Text sizeText;
+
     public int CurrentSize
     {
         get { return _size; }
         set
         {
             _size = value;
+            sizeText.text = _size.ToString();
 
-            if (_size > 1)
-            {
-                _topCardStats = Deck[_size - 1];
-            }
-            else
-            {
-                Destroy(gameObject, 0.1f);
-            }
+            // if (_size > 1)
+            // {
+            //     _topCardStats = Deck[_size - 1];
+            // }
+            // else
+            // {
+            //     // throw new Exception("deck count below zero");
+            //     Debug.Log("deck count below zero");
+            //     // Destroy(gameObject, 0.1f);
+            // }
 
             switch (_size)
             {
@@ -81,12 +87,13 @@ public class DeckBehaviour : MonoBehaviour
     {
         _awareness = BoardAwareness.Instance;
         player = GetComponentInParent<PlayerManager>();
-        EventManager.OnDatabaseCreated.AddListener(CreateDeck);
+        EventManager.OnDatabaseCreated.AddListener(Setup);
     }
 
-    private void CreateDeck()
+    private void Setup()
     {
         attachedHand = player.Hand;
+        EventManager.OnDeckInitialized.AddListener(DeckInitilize);
         if (Team == Team.Player)
         {
             EventManager.OnPlayerTurnEnd.AddListener(Draw);
@@ -95,8 +102,11 @@ public class DeckBehaviour : MonoBehaviour
         {
             EventManager.OnOpponentTurnEnd.AddListener(Draw);
         }
-        
-        if (player.isManuallyControlled && OptionStats.UseDeckCode && OptionStats.DeckCode.Length != 0)
+    }
+
+    private void DeckInitilize()
+    {
+        if (player.ControlType == PlayerControl.Manual && OptionStats.UseDeckCode && OptionStats.DeckCode.Length != 0)
         {
             str = OptionStats.DeckCode;
             CreateDeckFromString(str);    
@@ -105,29 +115,6 @@ public class DeckBehaviour : MonoBehaviour
         {
             CreateRaceDeck();
         }
-        // if (Team == Team.Player)
-        // {
-        //     EventManager.OnPlayerTurnEnd.AddListener(Draw);
-        //     attachedHand = _awareness.PlayerHand;
-
-        //     if (OptionStats.UseDeckCode && OptionStats.DeckCode.Length != 0)
-        //     {
-        //         str = OptionStats.DeckCode;
-        //         CreateDeckFromString(str);
-        //     }
-        //     else
-        //     {
-        //         CreateRaceDeck();
-        //     }
-        // }
-        // else
-        // {
-        //     EventManager.OnOpponentTurnEnd.AddListener(Draw);
-        //     attachedHand = _awareness.OpponentHand;
-        //     CreateRaceDeck();
-        // }
-        
-        // Debug.Log($"{Team} {Deck.Count}");
         StartCoroutine("StartGame");
     }
 
@@ -145,9 +132,70 @@ public class DeckBehaviour : MonoBehaviour
         return tempDeck;
     }
 
+    private void ResetDeck()
+    {
+        Deck = new List<CardStats>();
+        CurrentSize = 0;
+    }
+
+    // private void AddCard(CardStats card)
+    // {
+    //     Deck.Add(card);
+    //     CurrentSize++;
+    // }
+
+    // private void RemoveCard(CardStats card)
+    // {
+    //     if (Deck.Contains(card) && CurrentSize > 0)    
+    //     {
+    //         Deck.Remove(card);
+    //         CurrentSize--;
+    //     }
+    //     else if (CurrentSize == 0)
+    //     {
+    //         player.Hero.HealthComponent.Damage(1);
+    //     }
+    //     else
+    //     {
+    //         throw new Exception("suka na remove");
+    //     }
+    // }
+
+    private CardStats DrawAndGetNext()
+    {
+        CardStats card = null;
+        try 
+        {
+            if (Deck.Count <= 0)
+            {
+                throw new Exception("kekw deletion from deck");       
+            }
+            card = Deck[Deck.Count - 1];
+            Deck.RemoveAt(Deck.Count - 1);
+            
+            CurrentSize = Deck.Count;
+            
+        }
+        catch (Exception ex)
+        {   
+            Debug.Log(ex.Message);
+        }
+        return card;
+        
+        
+        
+    }
+
+    private CardStats AddAndGetNext(CardStats card)
+    {
+        Deck.Add(card);
+        CurrentSize = Deck.Count;
+        return Deck[Deck.Count - 1];
+    }
+
     public void CreateRaceDeck()
-    {   
-        // Задание типа фабрики
+    {
+        ResetDeck();
         switch (player.Race)
         {
             case (Race.Protoss):
@@ -169,13 +217,11 @@ public class DeckBehaviour : MonoBehaviour
     {
         foreach (var cardStats in cardStatsList)
         {
-            
-            // Debug.Log(Team + " Adding");
             for (int i = 0; i < dublicateRate; i++)
-                Deck.Add(cardStats);
+            {
+                _topCardStats = AddAndGetNext(cardStats);
+            }
         }
-        
-        CurrentSize = Deck.Count;
     }
 
     public void ShuffleDeck()
@@ -188,8 +234,6 @@ public class DeckBehaviour : MonoBehaviour
             int randIndex = Random.Range(i, CurrentSize);
             Deck[i] = Deck[randIndex];
             Deck[randIndex] = container;
-            // checkArr = Deck.Select(i => i.id).ToArray();
-            // Debug.Log(PrintArray(checkArr));
         }
     }
 
@@ -197,14 +241,21 @@ public class DeckBehaviour : MonoBehaviour
     // This will get the hang of the draw 
     IEnumerator StartGame()
     {
-        while (attachedHand.CardsList.Count < _startCardAmount)
+        while (attachedHand._cardsList.Count < _startCardAmount)
         {
             yield return new WaitForSeconds(0.3f);
             // Debug.Log($"{Team} {Deck.Count}");
             Draw();
         }
 
-        EventManager.PlayerTurnStarted();
+        if (Team == Team.Player)
+        {
+            EventManager.PlayerTurnStarted();
+        }
+        else
+        {
+            // EventManager.OpponentTurnStarted();
+        }
     }
 
     public void DrawCards(int amount)
@@ -227,25 +278,96 @@ public class DeckBehaviour : MonoBehaviour
 
     private void Draw()
     {
-        if (attachedHand.CardsList.Count < _maxCardAmount)
+        // check if can draw
+        if (Deck.Count <= 0)
         {
-            if (_topCardStats.Type == CardType.Creature)
-            {
-                CreatureCard newCard = _factory.CreateCreatureCard(player);
-                CardDealt(newCard);
-            }
-            else if (_topCardStats.Type == CardType.Spell)
-            {
-                SpellCard newCard = _factory.CreateSpellCard(player);
-                CardDealt(newCard);
-            }
+            player.Hero.HealthComponent.Damage(1);
+            return;
         }
-        else
+
+        // get next card
+        _topCardStats = DrawAndGetNext();
+        if (_topCardStats == null)
+        {
+            Debug.Log("bezdar"); 
+            return;
+        }
+        // check if can get card
+        if (attachedHand._cardsList.Count >= GameUtilities.MAX_HAND_CAPACITY)
+        {
+            Debug.Log($"Card burned{_topCardStats.PrintStats()}");
+            return;
+        }
+        // handle card draw
+        if (_topCardStats.Type == CardType.Creature)
+        {
+            CreatureCard newCard = _factory.CreateCreatureCard(player);
+            CardDealt(newCard);
+        }
+        else if (_topCardStats.Type == CardType.Spell)
+        {
+            SpellCard newCard = _factory.CreateSpellCard(player);
+            CardDealt(newCard);
+        }
+        // if (attachedHand._cardsList.Count < _maxCardAmount && Deck.Count > 0)
+        // {
+        //     if (_topCardStats.Type == CardType.Creature)
+        //     {
+        //         CreatureCard newCard = _factory.CreateCreatureCard(player);
+        //         CardDealt(newCard);
+        //     }
+        //     else if (_topCardStats.Type == CardType.Spell)
+        //     {
+        //         SpellCard newCard = _factory.CreateSpellCard(player);
+        //         CardDealt(newCard);
+        //     }
+        // }
+        // else
+        // {
+        //     Debug.Log($"Card burned{_topCardStats.PrintStats()}");
+        // }
+        // // CurrentSize -= 1;
+        // // Deck.Remove(_topCardStats);
+        // // RemoveCard(_topCardStats);
+        // _topCardStats = DrawAndGetNext();
+        // if (_topCardStats == null && Deck.Count == 0)
+        // {
+        //     player.Hero.HealthComponent.Damage(1);
+        // }
+    }
+
+    private void DrawSafe()
+    {
+        // check if can draw
+        if (Deck.Count < 0)
+        {
+            player.Hero.HealthComponent.Damage(1);
+            return;
+        }
+
+        // get next card
+        _topCardStats = DrawAndGetNext();
+        if (_topCardStats == null)
+        {
+            Debug.Log("bezdar"); 
+            return;
+        }
+        // check if can get card
+        if (attachedHand._cardsList.Count >= GameUtilities.MAX_HAND_CAPACITY)
         {
             Debug.Log($"Card burned{_topCardStats.PrintStats()}");
         }
-        CurrentSize -= 1;
-        Deck.Remove(_topCardStats);
+        // handle card draw
+        if (_topCardStats.Type == CardType.Creature)
+        {
+            CreatureCard newCard = _factory.CreateCreatureCard(player);
+            CardDealt(newCard);
+        }
+        else if (_topCardStats.Type == CardType.Spell)
+        {
+            SpellCard newCard = _factory.CreateSpellCard(player);
+            CardDealt(newCard);
+        }
     }
 
     private void CardDealt(Card newCard)
@@ -254,7 +376,7 @@ public class DeckBehaviour : MonoBehaviour
         newCard.transform.SetParent(attachedHand.transform, false);
         newCard.State = CardState.InHand;
         
-        if (!player.isManuallyControlled)
+        if (player.ControlType != PlayerControl.Manual)
         {
             newCard.IsDraggable = false;
             newCard.SubscribeToPriorityUpdate();
@@ -322,11 +444,11 @@ public class DeckBehaviour : MonoBehaviour
         {
             if (CardDatabase.CardsDict.ContainsKey(id))
             {
-                Deck.Add(CardDatabase.CardsDict[id]);
+                // AddCard(CardDatabase.CardsDict[id]);
+                AddAndGetNext(CardDatabase.CardsDict[id]);
                 // Debug.Log(Team + " Adding");
             }
         }
-        CurrentSize = Deck.Count;
 
         ShuffleDeck();
     }

@@ -30,6 +30,7 @@ public class TableBehaviour : MonoBehaviour
     private void Start()
     {
         SetupCardsList();
+        EventManager.OnBoardInitialized.AddListener(ResetTable);
         EventManager.OnCardRemovedFromTable.AddListener(RemoveCard);
         if (Team == Team.Opponent)
         {
@@ -40,6 +41,15 @@ public class TableBehaviour : MonoBehaviour
             EventManager.OnPlayerCardPlayed.AddListener(AddCard);
             // EventManager.AddPlayerCardPlayed(AddCard);
         }
+    }
+
+    private void ResetTable()
+    {
+        foreach (var card in _cardsList)
+        {
+            Destroy(card.gameObject);
+        }
+        _cardsList = new List<CreatureCard>();
     }
 
     public bool IsEmpty()
@@ -77,6 +87,26 @@ public class TableBehaviour : MonoBehaviour
         {
             _cardsList.Remove(creature);
         }
+        
+        if (NullCheck())
+        {
+            Debug.Log("dasfhls;dfhasd;fh");
+        }
+
+    }
+
+    private bool NullCheck()
+    {
+        bool bullshit = false;
+        for (int i = _cardsList.Count -1; i >= 0; i--)
+        {
+            if (_cardsList[i] == null)
+            {
+                bullshit = true;
+                _cardsList.RemoveAt(i);
+            }
+        }
+        return bullshit;
     }
     
     public void RefreshAttackAbility()

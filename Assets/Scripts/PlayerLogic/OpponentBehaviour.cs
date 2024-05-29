@@ -1,15 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using GOAP_System;
 using Interfaces;
-using PlayerLogic.CardPlacementStrategy;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
-// using RSG;
-
+using RSG;
+using System;
 public enum OpponentState
 {
     PlaceCards,
@@ -34,11 +30,17 @@ public enum OpponentState
         
         public float cardAttackDelay = 1f;
         public float cardPlaceDelay = 1f;
-        
+        private IPromiseTimer promiseTimer;
+
+        private void Awake()
+        {
+            promiseTimer = new PromiseTimer();
+        }
+
         private void Start()
         {
             player = GetComponentInParent<PlayerManager>();
-            if (player.isManuallyControlled)
+            if (player.ControlType != PlayerControl.GOAP)
                 return;
 
             CardDisplayPlace = GameObject.Find("CardDisplayPlace");
@@ -61,6 +63,14 @@ public enum OpponentState
                 EventManager.OnPlayerTurnEndAfter.AddListener(StartAiTurn);
             }
             
+        }
+
+        void Update()
+        {
+            // deltaTime is equal to the time since the last MainLoop
+            // promiseTimer.Update(Time.deltaTime);
+
+            // Process your other logic here
         }
 
         public void StartAiTurn()
@@ -87,6 +97,23 @@ public enum OpponentState
             TurnSystem.instance.SwitchTurn();
         }
 
+        private void OpponentTurnPromise()
+        {
+            StartCoroutine("PlaceCards");
+            ActionBase action = planner.ChooseAction();
+
+            if (action != null)
+            {
+                action.OnTick();
+            }
+            else
+            {
+                Debug.Log("ti");
+            }
+
+            TurnSystem.instance.SwitchTurn();
+        }
+
         private IEnumerator PlaceCards()
         {
             Card cardToPlay = ChooseCardToPlay();
@@ -99,14 +126,20 @@ public enum OpponentState
 
         }
 
+
+        private void CardsLoop()
+        {
+            
+        }
+
         private Card ChooseCardToPlay()
         {
-            _opponentHandEmpty = hand.CardsList.Count == 0;
+            _opponentHandEmpty = hand._cardsList.Count == 0;
 
             if (!_opponentHandEmpty)
             {
-                IEnumerable<string> names = hand.CardsList.Select(card => card.Name);
-                IEnumerable<Card> sortedCards = hand.CardsList.OrderByDescending(card => card.PlayPriority);
+                IEnumerable<string> names = hand._cardsList.Select(card => card.Name);
+                IEnumerable<Card> sortedCards = hand._cardsList.OrderByDescending(card => card.PlayPriority);
                 var handCards = sortedCards.ToList();
                 names = handCards.Select(card => card.Name);
                 string dbg = "";
@@ -196,19 +229,39 @@ public enum OpponentState
             
             foreach (CreatureCard card in tableCards)
             {
+                if (card == null)
+                {
+                    table.GetCardsList().Remove(card);
+                    continue;
+                }
                 _playerTableEmpty = opponentTable.GetCount() == 0;
                 if (card.CanAttack)
                 {
                     if (!_playerTableEmpty)
                     {
+                        if (card == null)
+                        {
+                            throw new Exception("suka player 3");
+                        }
+
                         List<CreatureCard> tempTable = opponentTable.GetCardsList();
                         int cardsCount = opponentTable.GetCount();
+
+                        if (card == null)
+                        {
+                            throw new Exception("suka player 2");
+                        }
+
                         
-                        randIndex = Random.Range(0, cardsCount);
+                        randIndex = UnityEngine.Random.Range(0, cardsCount);
                         if (tempTable[randIndex] == null)
-                            randIndex = Random.Range(0, cardsCount);
+                            randIndex = UnityEngine.Random.Range(0, cardsCount);
 
                         CreatureCard targetCard = tempTable[randIndex];
+                        if (card == null)
+                        {
+                            throw new Exception("suka player 1");
+                        }
 
                         if (targetCard != null)
                         {
@@ -216,6 +269,10 @@ public enum OpponentState
 
                             if (targetCardHealth.Health > 0)
                             {
+                                if (card == null)
+                                {
+                                    throw new Exception("suka player");
+                                }
                                 card.AttackCard(targetCard);
                                 card.CardEffects.ImplementOnTargetEffect(targetCardHealth);
                                 
@@ -239,9 +296,9 @@ public enum OpponentState
 
         private void DamageHero(HeroBehaviour hero, CreatureCard oppCard)
         {
-            if (hero != null)
+            if (hero != null && hero.isAlive)
             {
-                opponentHero.HealthComponent.Damage(oppCard.AttackComponent.Attack);
+                hero.HealthComponent.Damage(oppCard.AttackComponent.Attack);
                 // Debug.Log("damagehero");
             }
         }
@@ -249,6 +306,6 @@ public enum OpponentState
 
         private void Notify(string message)
         {
-            Debug.Log($"{player.Team} : {message}");
+            // Debug.Log($"{player.Team} : {message}");
         }
     }

@@ -9,10 +9,17 @@ public class HealthComponent :  MonoBehaviour, IHealth
     public UnityEvent OnChange = new UnityEvent();
     public UnityEvent OnDie = new UnityEvent();
 
+    public void AddOnDieEffect(UnityAction action)
+    {
+        OnDie.AddListener(action);
+    }
+
     private void Start()
     {
-        Health = MaxHealth;
+        ResetHealth();
     }
+
+    
     
     public int Health
     {
@@ -45,6 +52,11 @@ public class HealthComponent :  MonoBehaviour, IHealth
         {
             Health = MaxHealth;
         }
+    }
+
+    public void ResetHealth()
+    {
+        Health = MaxHealth;
     }
 
     public void IncreaseHealth(int amount)

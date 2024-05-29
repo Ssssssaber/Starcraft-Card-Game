@@ -23,12 +23,9 @@ public class TurnSystem : MonoBehaviour
     public static TurnSystem instance;
     public PlayerManager player;
     public PlayerManager opponent;
-    private List<TurnEffect> _playerTurnEffects = new List<TurnEffect>();
-    private List<TurnEffect> _opponentTurnEffects = new List<TurnEffect>();
+    public TurnEffectManager turnEffectManager {get; private set;}
     private void Awake()
     {
-        player = BoardAwareness.Instance.player;
-        opponent = BoardAwareness.Instance.opponent;
         if (instance != null && instance != this)
         {
             Debug.Log("You are trying to create another turn system gameobject");
@@ -36,83 +33,33 @@ public class TurnSystem : MonoBehaviour
         }
         else
         {
+            player = BoardAwareness.Instance.player;
+            opponent = BoardAwareness.Instance.opponent;
+            EventManager.OnBoardInitialized.AddListener(ResetSystem);
+            turnEffectManager = new TurnEffectManager();
             instance = this;
         }
     }
 
+    // private void Start()
+    // {
+    //     ResetSystem();
+    // }
+
+    public void ResetSystem()
+    {
+        TurnCount = 0;
+        isBottomPlayerTurn = true;
+        opponent.ManaComponent.RefreshManaOnTurn();
+        player.ManaComponent.RefreshManaOnTurn();
+        turnEffectManager.ResetTurnEffects();
+    }
+
+
     public int GetTurnCount()
     {
         return TurnCount;
-    }
-
-    public void AddOpponentTurnEffect(TurnEffect effect)
-    {
-        _opponentTurnEffects.Add(effect);
-    }
-
-    public void AddPlayerTurnEffect(TurnEffect effect)
-    {
-        _playerTurnEffects.Add(effect);
-    }
-
-    private void RemovePlayerTurnEffect(TurnEffect effect)
-    {
-        if (effect.Duration <= 0)
-            _playerTurnEffects.Remove(effect);
-    }
-    private void RemoveOpponentTurnEffect(TurnEffect effect)
-    {
-        if (effect.Duration <= 0)
-            _opponentTurnEffects.Remove(effect);
-    }
-
-    private void ImplementTurnEffects(ref List<TurnEffect> effects)
-    {
-        List<TurnEffect> expiredEffects = new List<TurnEffect>();
-        foreach (var effect in effects)
-        {
-            switch (effect.Duration)
-            {
-                case (1):
-                    effect.ImplementMethod();
-                    // Debug.Log($"EffectName: {effect.GetDesc()} : {effect.Duration}");
-                    expiredEffects.Add(effect);
-                    break;
-                case (0):
-                    Debug.Log($"EffectName: {effect.GetDesc()} : {effect.Duration}");
-                    break;
-                default:
-                    effect.ImplementMethod();
-                    break;
-            }
-        }
-
-        foreach (var effect in expiredEffects)
-        {
-            effects.Remove(effect);
-        }
-        // PrintTurnEffectsInfo(effects);
-    }
-
-    private void PrintTurnEffectsInfo(List<TurnEffect> effects)
-    {
-        string dbg = $"EFFECTS: ";
-        foreach (var effect in effects)
-        {
-            dbg += $"{effect.GetDesc()} : {effect.Duration}; ";
-        }
-        Debug.Log(dbg);
-    }
-    
-    private void Start()
-    {
-        // endTurnButton.onClick.AddListener(OnClick);
-        isBottomPlayerTurn = true;
-        // EventManager.OnPlayerTurnEnd.AddListener(EndPlayerTurn);
-        // EventManager.OnOpponentTurnEnd.AddListener(EndOpponentTurn);
-        opponent.ManaComponent.RefreshManaOnTurn();
-        player.ManaComponent.RefreshManaOnTurn();
-    }
+    }  
 
     public void UpdateTurnStats()
     {
@@ -149,23 +96,23 @@ public class TurnSystem : MonoBehaviour
     {
         isBottomPlayerTurn = false;
         EventManager.PlayerTurnEnded();
-        EndTurn(player, ref _opponentTurnEffects);
+        EndTurn(player, turnEffectManager);
     }
 
     public void EndOpponentTurn()
     {
         isBottomPlayerTurn = true;
         EventManager.OpponentTurnEnded();
-        EndTurn(opponent, ref _playerTurnEffects);    
+        EndTurn(opponent, turnEffectManager);    
     }
 
-    private void EndTurn(PlayerManager player, ref List<TurnEffect> turnEffects)
+    private void EndTurn(PlayerManager player, TurnEffectManager effectsManager)
     {
-        if (player.isManuallyControlled)
+        if (player.ControlType == PlayerControl.Manual)
         {
             player.Hand.DisableDragAbility();    
         }
-        if (player.OpposingPlayer.isManuallyControlled)
+        if (player.OpposingPlayer.ControlType == PlayerControl.Manual)
         {
             player.OpposingPlayer.Hand.RefreshDragAbility();
         }
@@ -173,6 +120,6 @@ public class TurnSystem : MonoBehaviour
         player.Table.DisableAttackAbility();
         player.OpposingPlayer.Table.RefreshAttackAbility();
         player.OpposingPlayer.ManaComponent.RefreshManaOnTurn();
-        ImplementTurnEffects(ref turnEffects);
+        effectsManager.ImplementTurnEffects(player.Team);
     }
 }

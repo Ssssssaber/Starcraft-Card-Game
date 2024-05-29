@@ -20,12 +20,27 @@ public class HeroBehaviour : MonoBehaviour
     public PlayerManager player;
 
     public Team Team;
+
+    public bool isAlive 
+    {
+        get { return _isAlive; }
+        private set 
+        {
+            _isAlive = value;
+        }
+    }
+
+    private bool _isAlive = true;
     
     private void Start()
     {
         player = GetComponentInParent<PlayerManager>();
         _awareness = BoardAwareness.Instance;
         HealthComponent.OnChange.AddListener(UpdateHealth);
+        HealthComponent.AddOnDieEffect(HeroDied);
+        HealthComponent.AddOnDieEffect(EndGame);
+
+        EventManager.OnBoardInitialized.AddListener(ResetHero);
 
         if (Team == Team.Opponent)
         {
@@ -37,6 +52,22 @@ public class HeroBehaviour : MonoBehaviour
             ApplyStats(HeroDatabase.HeroDict[OptionStats.PlayerHero + 1]);
             // ApplyStats(BoardBehaviour.instance.PlayerHeroStats);
         }
+    }
+
+    private void HeroDied()
+    {
+        isAlive = false;
+    }
+
+    private void ResetHero()
+    {
+        isAlive = true;
+        HealthComponent.ResetHealth();
+    }
+
+    private void EndGame()
+    {
+        EventManager.GameEnded();
     }
     
     private void UpdateHealth()
@@ -50,6 +81,7 @@ public class HeroBehaviour : MonoBehaviour
         _heroImage.sprite = heroStats.Image;
         player.HeroStats = heroStats;
         player.Race = heroStats.Race;
+        
         // if (Team == Team.Opponent)
         // {
         //     _awareness.OpponentHeroStats = heroStats;
@@ -63,4 +95,7 @@ public class HeroBehaviour : MonoBehaviour
 
         HealthComponent.SetupHealth(heroStats.Health);
     }
+
+
+    
 }

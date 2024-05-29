@@ -51,6 +51,7 @@ public class CreatureCard : Card
         _onCalc= _calcType.GetMethod(Name);
     }
     
+    
     public override void ApplyStats(CardStats cardStats)
     {
         base.ApplyStats(cardStats);

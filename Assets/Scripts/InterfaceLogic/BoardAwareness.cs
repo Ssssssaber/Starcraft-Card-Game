@@ -21,14 +21,30 @@ public class BoardAwareness : MonoBehaviour
 
     private void Awake()
     {
+        
         SetSingletone();
     }
+
+    private void Start()
+    {
+        // EventManager.OnGameStarted.AddListener(StartGame);
+    }
+
+    
+
+
+
+    
 
     private void SetSingletone()
     {
         if (Instance == null)
         {
             Instance = this;
+            if (player.ControlType == PlayerControl.ML || opponent.ControlType == PlayerControl.ML)
+            {
+                EventManager.isML = true;
+            }
         }
         else
         {

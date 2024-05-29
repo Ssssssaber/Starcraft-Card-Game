@@ -27,7 +27,7 @@ public class TurnEffect : IEffects
         _card = card;
         _onTurn = _onTurnType.GetMethod(card.Name);
         del = ImplementMethod;
-        ChangeDuration(card.AttackComponent.Attack);
+        ChangeDuration(2);
         // Debug.Log($"{_card.Name} : {Duration}");
     }
     

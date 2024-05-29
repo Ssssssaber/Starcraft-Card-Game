@@ -5,80 +5,85 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using UnityEditor.Build;
+using TMPro;
+using System;
 
 public class MLAgentTest : Agent
 {
     [SerializeField] private PlayerManager player;
+    [SerializeField] private TMP_Text episodeCountText;
+    [SerializeField] private TMP_Text stepCountText;
+    [SerializeField] private int maxStep = 100;
+    private int startStepCount = 0;
+    private bool gameReset = false;
+    private int episodeCount
+    {
+        get { return _episodeCount; }
+        set 
+        {
+            _episodeCount = value;
+            episodeCountText.text = $"Episode: {value}";
+        }
+    }
+    private int _episodeCount = 0;
 
+    private int stepCount
+    {
+        get { return _stepCount; }
+        set 
+        {
+            _stepCount = value;
+            stepCountText.text = $"Step: {value}";
+        }
+    }
+    private int _stepCount = 0;
+
+    private void Awake()
+    {
+        Academy.Instance.AutomaticSteppingEnabled = false;
+        // LazyInitialize();
+    }
 
     private void Start()
     {
-        Academy.Instance.AutomaticSteppingEnabled = false;
+        
+        EventManager.OnPlayerTurnStart.AddListener(CallForDecision);
         EventManager.OnPlayerTurnStart.AddListener(CollectEpisodeData);
-        // EventManager.OnPlayerTurnStart.AddListener(CallForDecision);
-
+// 
         EventManager.OnGameEnded.AddListener(EndGame);
 
-        EventManager.OnEnvironmentChange.AddListener(CollectEpisodeData);
-        // EventManager.OnOpponentTurnEnd.AddListener(CallForDecision);  
+        EventManager.OnOpponentTurnEnd.AddListener(CallForDecision);  
+        EventManager.OnOpponentTurnEnd.AddListener(CollectEpisodeData);
     }
 
     private void CallForDecision()
     {
         this.RequestDecision();
     }
+    
+    private void CollectEpisodeData()
+    {
+        Academy.Instance.EnvironmentStep();
+        stepCount = Academy.Instance.StepCount;
+        if (stepCount - startStepCount > maxStep)
+        {
+            EndGame();
+        }        
+    }
 
     public override void OnEpisodeBegin()
     {
-        /*
-        Set everything to a previous position:
-        1. Heroes
-        2. Decks
-        3. Table
-        4. Hand
-        5. Turn system: turn count + turn effects
-
-        Start the game again
-
-        */
-        base.OnEpisodeBegin();
+        episodeCount++;
+        startStepCount = stepCount;
+        if (gameReset)
+        {
+            EventManager.GameStarted();
+            gameReset = false;
+        }
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        /*
-        Data to collect:
-        Game Info
-        - Turn count (0 <= int < 100)
-        
-        Player Info
-        - Array of cards' ids in hand 
-            [1, 2, 3, 0, 0, 0, 0] -- length = 7
-            0 means that the is no card
-        - Array of player table cards
-            [1, 2, 3, 0, 0, 0, 0] -- length = 7
-            0 means that the is no card
-        - Number of Mana points of player (0 <= int <= 10)
-        
-        Enemy info
-        - Number of enemy player cards (0 <= int < 7)
-        - Array of enemy table cards 
-            [1, 2, 3, 0, 0, 0, 0] -- length = 7
-            0 means that the is no card
-        
-        
-        Additional
-        - Turn effects array for both players
-            ([1, 2, 3, 0, 0, 0, 0]) 
-        - (probably: Array of cards' manacost)
-
-
-        TOTAL COUNT: 24
-        */
-
-        Debug.Log("Collecting");
-        // GameInfo
-        // sensor.
         sensor.AddObservation(TurnSystem.instance.GetTurnCount());
         // PlayerInfo
         sensor.AddObservation(BoardAwareness.Instance.GetPlayerHandCards(player));
@@ -87,77 +92,69 @@ public class MLAgentTest : Agent
         // EnemyInfo
         sensor.AddObservation(BoardAwareness.Instance.GetPlayerHandCardsCount(player.OpposingPlayer));
         sensor.AddObservation(BoardAwareness.Instance.GetPlayerTableCards(player));
-
-        // Debug.Log(sensor.GetObservations());
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
+        GameUtilities.PrintArray(actions.DiscreteActions);
+        if (player.ControlType != PlayerControl.ML)
+        {
+            return;
+        }
+
         for (int i = 0; i < GameUtilities.MAX_HAND_CAPACITY; i++)
         {
-            GameUtilities.PrintArray(actions.DiscreteActions);
-            if (actions.DiscreteActions[i] == 1)
+            if (actions.DiscreteActions[i] == 0)
             {
-                Debug.Log($"card on pos{i} will be played");
+                continue;
             }
-            else
-            {
-                Debug.Log($"card on pos{i} is not played");
-            }
-            /*
-            // Try to play card at that position. If cannot play then set negative reward
-            
-            
-            */
-            if (player.CanPlayCardByPositonInHand(i))
-            {
-                player.PlayCardByPositionInHand(i);
-            }
-            else 
+            if (!player.TryPlayCardById(i))
             {
                 AddReward(-1f);
             }
         }
 
-        for (int i = 0; i < GameUtilities.MAX_TABLE_CAPACITY; i++)
+        int cardId = 0;
+        for (int i =  GameUtilities.MAX_HAND_CAPACITY; i < actions.DiscreteActions.Length; i++)
         {
-            /*
-            if (player.CanCardTryAttackTargetById(cardId, targetId))
+            if (!player.TryAttackTarget(cardId, actions.DiscreteActions[i]))
             {
-                player.CardAttactTargetById(cardId, targetId);
+                AddReward(-1f);
             }
-            else 
+            else
             {
-                AddReward(-1f)
+                Debug.Log($"card {cardId} attacks {i}");
             }
-            */
+            cardId++;
         }
 
-        // TurnSystem.instance.SwitchTurn();
         StartCoroutine(SwitchTurnWithPause());
     }
 
-
     private IEnumerator SwitchTurnWithPause()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(5f);
         TurnSystem.instance.SwitchTurn();
     }
-
-
-
+    
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         base.Heuristic(actionsOut);
     }
 
-    private void CollectEpisodeData()
+    private void OnWin()
     {
-        Academy.Instance.EnvironmentStep();
+        AddReward(100f);
+    }
+
+    private void OnDefeat()
+    {
+        AddReward(100f);
     }
 
     private void EndGame()
     {
+        gameReset = true;
         EndEpisode();
     }
 }

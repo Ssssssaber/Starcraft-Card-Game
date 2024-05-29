@@ -11,6 +11,7 @@ using UnityEngine;
         public Team Team;
         private void Start()
         {
+            EventManager.OnBoardInitialized.AddListener(ResetMana);
             if (Team == Team.Player)
             {
                 // EventManager.AddPlayerCardPlayed(SpendMana);
@@ -20,6 +21,12 @@ using UnityEngine;
             {
                 EventManager.OnOpponentCardPlayed.AddListener(SpendMana);
             }    
+        }
+
+        private void ResetMana()
+        {
+            MaxMana = 1;
+            currentMana = 0;
         }
 
         public void SpendMana(Card card)

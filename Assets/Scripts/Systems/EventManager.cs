@@ -4,6 +4,7 @@ using UnityEngine.Events;
 
     public class EventManager
     {
+        public static bool isML = false;
         public static bool IsDatabaseCreated = false;
 
         public static UnityEvent OnEnvironmentChange = new UnityEvent();
@@ -18,10 +19,13 @@ using UnityEngine.Events;
         public readonly static UnityEvent<CardStats> OnCardLoaded = new UnityEvent<CardStats>();
         public readonly static UnityEvent<List<CardStats>> OnAllCardsLoaded = new UnityEvent<List<CardStats>>();
         public readonly static UnityEvent OnDatabaseCreated = new UnityEvent();
+        public readonly static UnityEvent<Team> OnHeroDied = new UnityEvent<Team>();
         public readonly static UnityEvent OnGameEnded = new UnityEvent();
         // public static UnityEvent OnAnyCardPlayed = new UnityEvent();
 
         public readonly static UnityEvent OnPlayerTurnStart = new UnityEvent();
+        public readonly static UnityEvent OnBoardInitialized = new UnityEvent();
+        public readonly static UnityEvent OnDeckInitialized = new UnityEvent();
 
         public static void PlayerTurnStarted()
         {
@@ -44,11 +48,25 @@ using UnityEngine.Events;
         {
             IsDatabaseCreated = true;
             OnDatabaseCreated?.Invoke();
+            GameStarted();
+                
+        }
+
+        public static void GameStarted()
+        {
+            OnBoardInitialized?.Invoke();
+            OnDeckInitialized?.Invoke();
+            // OnGameStarted?.Invoke();
         }
 
         public static void GameEnded()
         {
             OnGameEnded?.Invoke();
+        }
+
+        public static void HeroDied(Team team)
+        {
+            OnHeroDied?.Invoke(team);
         }
         
         // Player functions

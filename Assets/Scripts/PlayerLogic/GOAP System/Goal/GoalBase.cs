@@ -16,7 +16,7 @@ public abstract class GoalBase : MonoBehaviour, IGoal
             DebugUI =  GameObject.Find("GoapUI").GetComponent<ManagerGOAPUI>();
         }
         player = GetComponentInParent<PlayerManager>();
-        if (!player.isManuallyControlled)
+        if (player.ControlType == PlayerControl.GOAP)
         {
             EventManager.OnEnvironmentChange.AddListener(UpdateGoalStats);
         }

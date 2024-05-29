@@ -38,13 +38,14 @@ public class SpellCardEffects : MonoBehaviour
     {
         if (_turnEffect != null)
         {
+            TurnEffectManager manager = TurnSystem.instance.turnEffectManager;            
             if (_card.Team == Team.Opponent)
             {
-                TurnSystem.instance.AddOpponentTurnEffect(_turnEffect);
+                manager.AddOpponentTurnEffect(_turnEffect);
             }
             else
             {
-                TurnSystem.instance.AddPlayerTurnEffect(_turnEffect);
+                manager.AddOpponentTurnEffect(_turnEffect);
             }
         }
         DestroySpellCard();

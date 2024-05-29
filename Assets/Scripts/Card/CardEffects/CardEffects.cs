@@ -38,7 +38,7 @@ public static class CardEffectsBaseMethods
         //     targetHand = _awareness.PlayerHand;
         // }
 
-        foreach (var card in new List<Card>(player.Hand.CardsList))
+        foreach (var card in new List<Card>(player.Hand._cardsList))
         {
             action(card, interactionAmount);
         }

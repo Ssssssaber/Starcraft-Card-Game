@@ -36,7 +36,7 @@ public class DragDrop : MonoBehaviour
         // }
 
         playerManaComponent = _card.ownerPlayer.ManaComponent;
-        if (!_card.ownerPlayer.isManuallyControlled)
+        if (_card.ownerPlayer.ControlType != PlayerControl.Manual)
         {
             _card.IsDraggable = false;
         }

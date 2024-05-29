@@ -19,7 +19,7 @@ namespace GOAP_System
         }
         public int Transcendence(PlayerManager player)
         {
-            int freeHandSlots = MAX_HAND_CAPACITY - player.Hand.CardsList.Count;
+            int freeHandSlots = MAX_HAND_CAPACITY - player.Hand._cardsList.Count;
             if (freeHandSlots == 0)
             {
                 return -1;
@@ -39,7 +39,7 @@ namespace GOAP_System
 
         public int Infusion(PlayerManager player)
         {
-            int freeHandSlots = MAX_HAND_CAPACITY - player.Hand.CardsList.Count;
+            int freeHandSlots = MAX_HAND_CAPACITY - player.Hand._cardsList.Count;
             if (freeHandSlots == 0)
             {
                 return -1;
@@ -49,7 +49,7 @@ namespace GOAP_System
 
         public int KhaydarinAmulet(PlayerManager player)
         {
-            int handCount = player.Hand.CardsList.Count;
+            int handCount = player.Hand._cardsList.Count;
             if (handCount == 0)
             {
                 return -1;
