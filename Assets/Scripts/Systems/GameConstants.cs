@@ -30,11 +30,22 @@ public class GameUtilities : MonoBehaviour
     public static int MAX_HAND_CAPACITY = 7;
     public static int MAX_TABLE_CAPACITY = 7;
     public static int START_CARD_COUNT = 3;
+	public static float ACTION_WAIT_TIME = 0.2f;
 
     public static void PrintArray<T>(IEnumerable<T> array)
     {
         Debug.Log(String.Join("; ", array.Select(value => value.ToString()).ToArray()));
     }
+
+	public static string ArrayToString<T>(IEnumerable<T> array)
+    {
+        return String.Join("; ", array.Select(value => value.ToString()).ToArray());
+    }
+
+	public static void setActionWaitTime(float actionTime)
+	{
+		ACTION_WAIT_TIME = actionTime;
+	}
 
     public static string CapitalizeRemoveSpaces(string line)
     {

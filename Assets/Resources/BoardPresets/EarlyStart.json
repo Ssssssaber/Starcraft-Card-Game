@@ -1,0 +1,10 @@
+{
+	"Name": "earlyStart",
+	"playerHeroId": 0,
+	"playerGOAP": false,
+	"playerDeckCode": "12;12;12;12;12;12;12;12;",
+	"opponentHeroId": 1,
+	"opponentGOAP": false,
+	"opponentDeckCode": "13;13;13;13;13;13;13;13;",
+	"encoded": false
+}

@@ -26,7 +26,7 @@ using UnityEngine;
         private void ResetMana()
         {
             MaxMana = 1;
-            currentMana = 0;
+            currentMana = 1;
         }
 
         public void SpendMana(Card card)

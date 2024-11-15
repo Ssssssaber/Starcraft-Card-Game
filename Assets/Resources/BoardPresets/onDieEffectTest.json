@@ -1,0 +1,10 @@
+{
+	"Name": "onDieEffectPreset",
+	"playerHeroId": 0,
+	"playerGOAP": false,
+	"playerDeckCode": "17;17;17;17;17;17;17;",
+	"opponentHeroId": 1,
+	"opponentGOAP": false,
+	"opponentDeckCode": "13;13;13;13;13;13;13;13;",
+	"encoded": false
+}

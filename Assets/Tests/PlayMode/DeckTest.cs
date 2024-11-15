@@ -26,7 +26,7 @@ public class DeckTest1
         // }
         // Use the Assert class to test conditions.
         // Use yield to skip a frame.
-        yield return null;
+        
 
         if (EventManager.IsDatabaseCreated)
         {
@@ -43,20 +43,7 @@ public class DeckTest1
             Debug.Log(testNames);
             Assert.AreEqual(resultNames, testNames);
         }
-    }
 
-    private void Check()
-    {
-        var gameObject = new GameObject();
-        var deck = gameObject.AddComponent<DeckBehaviour>();
-
-        deck.CreateDeckFromString(deckString);
-
-        foreach (var card in deck.Deck)
-        {
-            testNames.Add(card.Name);
-        }
-        Debug.Log(testNames);
-        Assert.AreEqual(resultNames, testNames);
+		yield return null;
     }
 }

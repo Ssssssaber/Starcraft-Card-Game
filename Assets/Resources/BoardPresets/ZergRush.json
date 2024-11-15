@@ -1,0 +1,10 @@
+{
+	"Name": "zergRush",
+	"playerHeroId": 0,
+	"playerGOAP": false,
+	"playerDeckCode": "9;9;9;9;9;9;9;9;",
+	"opponentHeroId": 0,
+	"opponentGOAP": false,
+	"opponentDeckCode": "9;9;9;9;9;9;9;9;",
+	"encoded": false
+}

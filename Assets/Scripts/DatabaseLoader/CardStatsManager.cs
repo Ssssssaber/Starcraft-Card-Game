@@ -52,7 +52,12 @@ public class CardStatsManager : MonoBehaviour, ICardStatsLoader
     [SerializeField] private CardStats _testStats;
 
     private CardStats _downloadedCardStats;
-
+	
+	public bool getAllCardsLoaded()
+	{
+		if (_cardsCount == 0) return false;
+		return LoadedCards.Count == _cardsCount;
+	}
     private void HandleDownload(CardStats downloadedCardStats)
     {
         EventManager.CardLoaded(downloadedCardStats);
@@ -153,7 +158,7 @@ public class CardStatsManager : MonoBehaviour, ICardStatsLoader
             form.AddField("request-type", RequestType.Download.ToString());
             form.AddField("id", i);
             RoutinesQueue.coroutineQueue.Enqueue(Loading(form, RequestType.Download));
-            // yield return new WaitForSeconds(0f);
+            // yield return new WaitForSeconds(GameUtilities.ACTION_WAIT_TIME);0f);
         }
 
         public void UploadCard(string _name, string desc,

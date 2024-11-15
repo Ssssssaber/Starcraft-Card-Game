@@ -209,7 +209,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (TryGetHandCardByPosition(cardPosition, out Card card))
         {
-            bool isValid = (card.ManaComponent.Mana < ManaComponent.currentMana) &&
+            bool isValid = (card.ManaComponent.Mana <= ManaComponent.currentMana) &&
             (Table.GetCount() < GameUtilities.MAX_TABLE_CAPACITY)&&
             (cardPosition < Hand.GetCount());
             
@@ -269,7 +269,7 @@ public class PlayerManager : MonoBehaviour
                     return true;
                 default:
                     // try get card
-                    isValid = TryGetTableCardByPosition(targetId, out CreatureCard targetCard);
+                    isValid = OpposingPlayer.TryGetTableCardByPosition(targetId, out CreatureCard targetCard);
                     // try attack card
                     isValid = isValid && TryCardAttackCard(card, targetCard);
                     return isValid;

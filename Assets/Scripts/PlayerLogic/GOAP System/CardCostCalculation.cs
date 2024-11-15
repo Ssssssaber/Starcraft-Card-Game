@@ -39,12 +39,12 @@ namespace GOAP_System
 
         public int Infusion(PlayerManager player)
         {
-            int freeHandSlots = MAX_HAND_CAPACITY - player.Hand._cardsList.Count;
-            if (freeHandSlots == 0)
+            int cardsOnTable = player.Table.GetCount();
+            if (cardsOnTable == 0)
             {
                 return -1;
             }
-            return freeHandSlots * CARD_WEIGHT * 5;
+            return cardsOnTable * CARD_WEIGHT * 5;
         }
 
         public int KhaydarinAmulet(PlayerManager player)
@@ -56,5 +56,15 @@ namespace GOAP_System
             }
             return handCount * CARD_WEIGHT * 5;
         }
+
+		public int OrbitalStrike(PlayerManager player)
+		{
+			int cardsOnTable = player.OpposingPlayer.Table.GetCount();
+            if (cardsOnTable == 0)
+            {
+                return -1;
+            }
+            return cardsOnTable * CARD_WEIGHT * 5;
+		}
     }
 }

@@ -1,0 +1,10 @@
+{
+	"Name": "attackEffectPreset",
+	"playerHeroId": 0,
+	"playerGOAP": false,
+	"playerDeckCode": "5;5;5;5;5;5;5;5;5;",
+	"opponentHeroId": 0,
+	"opponentGOAP": false,
+	"opponentDeckCode": "2;2;2;2;2;2;2;2;2;",
+	"encoded": false
+}

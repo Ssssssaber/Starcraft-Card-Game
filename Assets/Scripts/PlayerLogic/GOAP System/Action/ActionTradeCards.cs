@@ -33,4 +33,9 @@ public class ActionTradeCards : ActionBase
     {
         StartCoroutine(_oppBehaviour.TradeThenGoFace());
     }
+
+    public override bool getIsAggressive()
+    {
+        return false;
+    }
 }

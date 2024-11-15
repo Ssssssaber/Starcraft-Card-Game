@@ -30,15 +30,17 @@ public enum OpponentState
         
         public float cardAttackDelay = 1f;
         public float cardPlaceDelay = 1f;
-        private IPromiseTimer promiseTimer;
 
-        private void Awake()
-        {
-            promiseTimer = new PromiseTimer();
-        }
+		public bool isAutomatic = true;
 
-        private void Start()
+		private void Awake()
+		{
+			EventManager.OnBoardInitialized.AddListener(Init);
+		}
+
+        public void Init()
         {
+            
             player = GetComponentInParent<PlayerManager>();
             if (player.ControlType != PlayerControl.GOAP)
                 return;
@@ -52,6 +54,9 @@ public enum OpponentState
             opponentHero = player.OpposingPlayer.Hero;
 
             planner = GetComponent<GOAPPlanner>();
+			planner.Init();
+			
+			if (!isAutomatic) return;
             team = player.Team;
             if (team == Team.Player)
             {
@@ -75,14 +80,16 @@ public enum OpponentState
 
         public void StartAiTurn()
         {
+			
+
             StartCoroutine("OpponentTurn");
         }
 
         private IEnumerator OpponentTurn()
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(GameUtilities.ACTION_WAIT_TIME);
             StartCoroutine("PlaceCards");
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(GameUtilities.ACTION_WAIT_TIME);
             ActionBase action = planner.ChooseAction();
 
             if (action != null)
@@ -97,10 +104,15 @@ public enum OpponentState
             TurnSystem.instance.SwitchTurn();
         }
 
-        private void OpponentTurnPromise()
-        {
-            StartCoroutine("PlaceCards");
-            ActionBase action = planner.ChooseAction();
+		public void PlaceCards()
+		{
+			StartCoroutine("PlaceCardsRoutine");
+		}
+
+		public bool ChooseRoundAction()
+		{
+			ActionBase action = planner.ChooseAction();
+
 
             if (action != null)
             {
@@ -112,16 +124,19 @@ public enum OpponentState
             }
 
             TurnSystem.instance.SwitchTurn();
-        }
 
-        private IEnumerator PlaceCards()
+
+            return action.getIsAggressive();
+		}
+
+        private IEnumerator PlaceCardsRoutine()
         {
             Card cardToPlay = ChooseCardToPlay();
             while (cardToPlay != null)
             {
                 PlaceChosenCard(cardToPlay);
                 cardToPlay = ChooseCardToPlay();
-                yield return new WaitForSeconds(cardPlaceDelay);
+                yield return new WaitForSeconds(GameUtilities.ACTION_WAIT_TIME);
             }
 
         }
@@ -218,7 +233,7 @@ public enum OpponentState
                 }
             }
 
-            yield return new WaitForSeconds(cardAttackDelay);
+            yield return new WaitForSeconds(GameUtilities.ACTION_WAIT_TIME);
         }
         
         // think of cards that can attack multiple times
@@ -278,7 +293,7 @@ public enum OpponentState
                                 
                                 Notify($"{card.Name} attacks {targetCard.Name}");
                                 
-                                yield return new WaitForSeconds(cardAttackDelay);
+                                // yield return new WaitForSeconds(GameUtilities.ACTION_WAIT_TIME);
                             }
                         }
                     }
@@ -287,11 +302,11 @@ public enum OpponentState
                     {
                         DamageHero(opponentHero, card);
                         Notify($"{card.Name} attacks {opponentHero.Team}");
-                        yield return new WaitForSeconds(cardAttackDelay);
+                        yield return new WaitForSeconds(GameUtilities.ACTION_WAIT_TIME);
                     }
                 }
             }
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(GameUtilities.ACTION_WAIT_TIME);
         }
 
         private void DamageHero(HeroBehaviour hero, CreatureCard oppCard)

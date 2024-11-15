@@ -27,4 +27,9 @@ public abstract class ActionBase : MonoBehaviour
     {
         
     }
+
+    public virtual bool getIsAggressive()
+    {
+        return false;
+    }
 }

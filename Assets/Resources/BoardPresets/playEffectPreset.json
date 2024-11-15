@@ -1,0 +1,10 @@
+{
+	"Name": "playEffectPreset",
+	"playerHeroId": 0,
+	"playerGOAP": false,
+	"playerDeckCode": "12;12;12;12;12;12;12;12;4;",
+	"opponentHeroId": 0,
+	"opponentGOAP": false,
+	"opponentDeckCode": "12;12;12;12;12;12;12;12;",
+	"encoded": false
+}

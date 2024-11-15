@@ -7,6 +7,7 @@ using Unity.MLAgents.Sensors;
 using UnityEditor.Build;
 using TMPro;
 using System;
+using UnityEngine.Animations;
 
 public class MLAgentTest : Agent
 {
@@ -14,6 +15,7 @@ public class MLAgentTest : Agent
     [SerializeField] private TMP_Text episodeCountText;
     [SerializeField] private TMP_Text stepCountText;
     [SerializeField] private int maxStep = 100;
+    [SerializeField] private TMP_Text reward;
     private int startStepCount = 0;
     private bool gameReset = false;
     private int episodeCount
@@ -44,16 +46,18 @@ public class MLAgentTest : Agent
         // LazyInitialize();
     }
 
-    private void Start()
+    private void Init()
     {
-        
+        if (player.ControlType != PlayerControl.ML) return;
         EventManager.OnPlayerTurnStart.AddListener(CallForDecision);
         EventManager.OnPlayerTurnStart.AddListener(CollectEpisodeData);
 // 
-        EventManager.OnGameEnded.AddListener(EndGame);
+        // EventManager.OnGameEnded.AddListener(EndGame);
 
         EventManager.OnOpponentTurnEnd.AddListener(CallForDecision);  
         EventManager.OnOpponentTurnEnd.AddListener(CollectEpisodeData);
+
+        EventManager.OnHeroDied.AddListener(EndGameTeam);
     }
 
     private void CallForDecision()
@@ -84,6 +88,7 @@ public class MLAgentTest : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
+		if (player.ControlType != PlayerControl.ML) return;
         sensor.AddObservation(TurnSystem.instance.GetTurnCount());
         // PlayerInfo
         sensor.AddObservation(BoardAwareness.Instance.GetPlayerHandCards(player));
@@ -111,6 +116,7 @@ public class MLAgentTest : Agent
             if (!player.TryPlayCardById(i))
             {
                 AddReward(-1f);
+                // Academy.Instance.EnvironmentStep();
             }
         }
 
@@ -120,6 +126,7 @@ public class MLAgentTest : Agent
             if (!player.TryAttackTarget(cardId, actions.DiscreteActions[i]))
             {
                 AddReward(-1f);
+                
             }
             else
             {
@@ -127,13 +134,14 @@ public class MLAgentTest : Agent
             }
             cardId++;
         }
+        // Academy.Instance.EnvironmentStep();
 
         StartCoroutine(SwitchTurnWithPause());
     }
 
     private IEnumerator SwitchTurnWithPause()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(GameUtilities.ACTION_WAIT_TIME);
         TurnSystem.instance.SwitchTurn();
     }
     
@@ -142,14 +150,22 @@ public class MLAgentTest : Agent
         base.Heuristic(actionsOut);
     }
 
-    private void OnWin()
-    {
-        AddReward(100f);
-    }
+    
 
-    private void OnDefeat()
+    private void EndGameTeam(Team winner)
     {
-        AddReward(100f);
+        if (winner == Team.Opponent)
+        {
+            AddReward(-100f);
+            Academy.Instance.EnvironmentStep();
+        }
+        else
+        {
+            AddReward(100f);
+            Academy.Instance.EnvironmentStep();
+        }
+
+        reward.text = GetCumulativeReward().ToString();
     }
 
     private void EndGame()

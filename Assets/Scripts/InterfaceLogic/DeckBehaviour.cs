@@ -85,13 +85,13 @@ public class DeckBehaviour : MonoBehaviour
 
     public void Awake()
     {
-        _awareness = BoardAwareness.Instance;
         player = GetComponentInParent<PlayerManager>();
         EventManager.OnDatabaseCreated.AddListener(Setup);
     }
 
     private void Setup()
     {
+		_awareness = BoardAwareness.Instance;
         attachedHand = player.Hand;
         EventManager.OnDeckInitialized.AddListener(DeckInitilize);
         if (Team == Team.Player)
@@ -106,11 +106,28 @@ public class DeckBehaviour : MonoBehaviour
 
     private void DeckInitilize()
     {
-        if (player.ControlType == PlayerControl.Manual && OptionStats.UseDeckCode && OptionStats.DeckCode.Length != 0)
-        {
-            str = OptionStats.DeckCode;
+		if (player.Team == Team.Player && OptionStats.PlayerDeckCode.Length != 0)
+		{
+			if (OptionStats.PlayerDeckCode == "random")
+			{
+				CreateRaceDeck();
+				return;
+			}
+			str = OptionStats.PlayerDeckCode;
             CreateDeckFromString(str);    
-        }
+		}
+		else if (player.Team == Team.Opponent && OptionStats.OpponentDeckCode.Length != 0)
+		{
+			if (OptionStats.OpponentDeckCode == "random")
+			{
+				CreateRaceDeck();
+				return;
+			}
+			str = OptionStats.OpponentDeckCode;
+            CreateDeckFromString(str);    	
+			
+			
+		}
         else
         {
             CreateRaceDeck();
@@ -210,7 +227,7 @@ public class DeckBehaviour : MonoBehaviour
                 Debug.Log("hue");
                 throw new Exception("hue");
         }
-        ShuffleDeck();
+        if (OptionStats.shuffleDecks) ShuffleDeck();
     }
 
     private void AddCardsFromList(List<CardStats> cardStatsList, int dublicateRate)
@@ -243,7 +260,7 @@ public class DeckBehaviour : MonoBehaviour
     {
         while (attachedHand._cardsList.Count < _startCardAmount)
         {
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(GameUtilities.ACTION_WAIT_TIME);
             // Debug.Log($"{Team} {Deck.Count}");
             Draw();
         }
@@ -269,7 +286,7 @@ public class DeckBehaviour : MonoBehaviour
         
         for (int i = 0; i < amount; i++)
         {
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(GameUtilities.ACTION_WAIT_TIME);
             Draw();
             // count += 1;
         }
@@ -433,7 +450,7 @@ public class DeckBehaviour : MonoBehaviour
                 throw new Exception("hue");
         }
         
-        deckString = DecodeAsci(deckString);
+        if (OptionStats.encoded) deckString = DecodeAsci(deckString);
         deckString = deckString.Remove(deckString.Length - 1);
         
         // if (Deck.Count != 0) Deck = new List<CardStats>();
@@ -450,7 +467,7 @@ public class DeckBehaviour : MonoBehaviour
             }
         }
 
-        ShuffleDeck();
+        if (OptionStats.shuffleDecks) ShuffleDeck();
     }
     
 

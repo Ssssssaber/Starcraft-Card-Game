@@ -19,6 +19,14 @@ namespace GOAP_System
             _actions = GetComponents<ActionBase>();
         }
 
+		public void Init()
+		{
+			foreach (GoalBase goal in _goals)
+			{
+				goal.Init();
+			}
+		}
+
         public ActionBase ChooseAction()
         {
             GoalBase bestGoal = null;

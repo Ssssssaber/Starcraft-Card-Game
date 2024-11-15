@@ -37,8 +37,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -259.24426, y: 502.10568}
-  m_SizeDelta: {x: 518.4786, y: -1004.2114}
+  m_AnchoredPosition: {x: -347.4179, y: 92.407}
+  m_SizeDelta: {x: 694.8358, y: -184.81}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4079216751252922893
 MonoBehaviour:
@@ -53,6 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goalPrefab: {fileID: 3285894847729307629, guid: fbc407f8d8fd4974caba34c4aa26eca2, type: 3}
+  player: {fileID: 0}
 --- !u!114 &552062937773609126
 MonoBehaviour:
   m_ObjectHideFlags: 0

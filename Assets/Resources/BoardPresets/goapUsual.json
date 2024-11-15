@@ -1,0 +1,10 @@
+{
+	"Name": "goapUsual",
+	"playerHeroId": 0,
+	"playerGOAP": true,
+	"playerDeckCode": "random",
+	"opponentHeroId": 1,
+	"opponentGOAP": true,
+	"opponentDeckCode": "random",
+	"encoded": false
+}

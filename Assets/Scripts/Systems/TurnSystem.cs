@@ -24,7 +24,7 @@ public class TurnSystem : MonoBehaviour
     public PlayerManager player;
     public PlayerManager opponent;
     public TurnEffectManager turnEffectManager {get; private set;}
-    private void Awake()
+    public void Init()
     {
         if (instance != null && instance != this)
         {

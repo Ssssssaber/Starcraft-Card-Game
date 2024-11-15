@@ -232,17 +232,22 @@ public static class CardEffectsBaseMethods
 
 public class OnPlayEffectsMethods
 {
+	public void Transfuse(Card attachedCard)
+    {
+        AOESpell(1, attachedCard.ownerPlayer, HealCard);
+    }
+	public void OrbitalStrike(Card attachedCard)
+	{
+	    AOESpell(attachedCard.AttackComponent.Attack, attachedCard.ownerPlayer.OpposingPlayer, DamageCard);	
+	}
+    
     public void DarkTemplar(CreatureCard attachedCard)
     {
         Debug.Log("heaherahehafeha");
-        // (attachedCard.GetComponent<IHealth>(), 2);
     }
 
     public void WildMutation(SpellCard attachedCard)
     {
-        // AOESpell(attachedCard.AttackComponent.Attack, attachedCard.ownerPlayer, BuffCardHealth);
-        // AOESpell(attachedCard.AttackComponent.Attack, attachedCard.ownerPlayer, IncreaseCardAttack);
-        
         AOESpell(1, attachedCard.ownerPlayer, BuffCardHealth);
         AOESpell(1, attachedCard.ownerPlayer, IncreaseCardAttack);
     }
@@ -272,6 +277,13 @@ public class OnDieEffectsMethods
     {
         Debug.Log(attachedCard);
     }
+
+	public void Baneling(Card attachedCard)
+	{
+		// AOESpell(1, DamageCard);
+		AOESpell(1, attachedCard.ownerPlayer.OpposingPlayer, DamageCard);
+		Debug.Log("baneling");
+	}
 }
 
 public class OnAttackEffectsMethods
@@ -287,7 +299,8 @@ public class OnAttackEffectsMethods
 public class OnTurnEffectsMethods
 {
     public delegate void TurnDelegate(Card attachedCard);
-    
+
+	
     public void Storm(Card attachedCard)
     {
         AOESpell(2, attachedCard.ownerPlayer.OpposingPlayer, DamageCard);

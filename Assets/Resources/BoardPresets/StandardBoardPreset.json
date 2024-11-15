@@ -1,0 +1,10 @@
+{
+	"Name": "standard",
+	"playerHeroId": 1,
+	"playerGOAP": false,
+	"playerDeckCode": "1;1;1;1;1;1;1;1;",
+	"opponentHeroId": 1,
+	"opponentGOAP": false,
+	"opponentDeckCode": "1;1;1;1;1;1;1;1;",
+	"encoded": false
+}

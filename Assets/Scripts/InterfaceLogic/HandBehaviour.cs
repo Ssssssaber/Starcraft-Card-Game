@@ -52,6 +52,10 @@ public class HandBehaviour : MonoBehaviour
             Destroy(card.gameObject);
         }
         _cardsList = new List<Card>();
+
+        while (transform.childCount > 0) {
+            DestroyImmediate(transform.GetChild(0).gameObject);
+        }
     }
 
     private void HandleState()

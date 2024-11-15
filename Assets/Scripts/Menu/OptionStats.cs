@@ -9,8 +9,10 @@ using UnityEngine.UI;
 public class OptionStats : MonoBehaviour
 {
    // think of bug: heroes selected independently of stats changed
-   public static String DeckCode;
-   public static bool UseDeckCode = false;
+   public static bool shuffleDecks = false;
+   public static bool encoded = true;
+   public static string PlayerDeckCode;
+   public static string OpponentDeckCode;
    public static int PlayerHero = 0;
    public static int OpponentHero = 0;
    
@@ -21,20 +23,14 @@ public class OptionStats : MonoBehaviour
 
    private void Start()
    {
-      PlayButton.GameStart.AddListener(SetDeckCode);
-      PlayButton.GameStart.AddListener(SetUseDeckCode);
+      PlayButton.GameStart.AddListener(SetPlayerDeckCode);
       // PlayButton.GameStart.AddListener(SetPlayerHero);
       // PlayButton.GameStart.AddListener(SetOpponentHero);
    }
    
-   public void SetDeckCode()
+   public void SetPlayerDeckCode()
    {
-      DeckCode = deckCodeInputField.text;
-   }
-
-   public void SetUseDeckCode()
-   {
-      UseDeckCode = deckCodeToggle;
+      PlayerDeckCode = deckCodeInputField.text;
    }
 
    public void SetPlayerHero()

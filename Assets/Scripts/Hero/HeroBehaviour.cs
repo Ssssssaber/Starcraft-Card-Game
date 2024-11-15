@@ -41,22 +41,27 @@ public class HeroBehaviour : MonoBehaviour
         HealthComponent.AddOnDieEffect(EndGame);
 
         EventManager.OnBoardInitialized.AddListener(ResetHero);
+		EventManager.OnBoardInitialized.AddListener(Init);
 
-        if (Team == Team.Opponent)
+        
+    }
+
+	public void Init()
+	{
+		if (Team == Team.Opponent)
         {
-            // ApplyStats(BoardBehaviour.instance.OpponentHeroStats);
             ApplyStats(HeroDatabase.HeroDict[OptionStats.OpponentHero + 1]);
         }
         else
         {
             ApplyStats(HeroDatabase.HeroDict[OptionStats.PlayerHero + 1]);
-            // ApplyStats(BoardBehaviour.instance.PlayerHeroStats);
         }
-    }
+	}
 
     private void HeroDied()
     {
         isAlive = false;
+        EventManager.OnHeroDied?.Invoke(Team);
     }
 
     private void ResetHero()

@@ -1,0 +1,10 @@
+{
+	"Name": "calcGoapPreset",
+	"playerHeroId": 0,
+	"playerGOAP": true,
+	"playerDeckCode": "12;12;12;10;6;12;16;4;",
+	"opponentHeroId": 1,
+	"opponentGOAP": true,
+	"opponentDeckCode": "13;13;13;3;13;13;18;15;",
+	"encoded": false
+}

@@ -9,6 +9,8 @@ public class HealthComponent :  MonoBehaviour, IHealth
     public UnityEvent OnChange = new UnityEvent();
     public UnityEvent OnDie = new UnityEvent();
 
+	private bool died = false;
+
     public void AddOnDieEffect(UnityAction action)
     {
         OnDie.AddListener(action);
@@ -78,10 +80,13 @@ public class HealthComponent :  MonoBehaviour, IHealth
 
     public void Damage(int amount)
     {
+		if (died) return;
+
         Health -= amount;
 
         if (Health <= 0)
         {
+			died = true;
             OnDie?.Invoke();
         }
     }

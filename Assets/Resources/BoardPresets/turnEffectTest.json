@@ -1,0 +1,10 @@
+{
+	"Name": "turnEffectPreset",
+	"playerHeroId": 0,
+	"playerGOAP": false,
+	"playerDeckCode": "6;6;6;6;6;6;6;6;16;",
+	"opponentHeroId": 1,
+	"opponentGOAP": false,
+	"opponentDeckCode": "18;18;18;18;18;18;18;",
+	"encoded": false
+}

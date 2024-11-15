@@ -15,12 +15,21 @@ public abstract class GoalBase : MonoBehaviour, IGoal
         {
             DebugUI =  GameObject.Find("GoapUI").GetComponent<ManagerGOAPUI>();
         }
-        player = GetComponentInParent<PlayerManager>();
+        
+    }
+
+	public void Init()
+	{
+		player = GetComponentInParent<PlayerManager>();
         if (player.ControlType == PlayerControl.GOAP)
         {
             EventManager.OnEnvironmentChange.AddListener(UpdateGoalStats);
         }
-    }
+		else
+		{
+			gameObject.SetActive(false);
+		}
+	}
 
     public abstract bool CanRun();
 

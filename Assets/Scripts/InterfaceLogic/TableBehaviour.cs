@@ -50,6 +50,10 @@ public class TableBehaviour : MonoBehaviour
             Destroy(card.gameObject);
         }
         _cardsList = new List<CreatureCard>();
+
+       while (transform.childCount > 0) {
+            DestroyImmediate(transform.GetChild(0).gameObject);
+        }
     }
 
     public bool IsEmpty()

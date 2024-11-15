@@ -45,7 +45,7 @@ public class GoalControlTable : GoalBase
         //             (_awareness.CalculatePlayerCardDamage()) +
         //             cardWeight * _awareness.PlayerTableCardsCount();
         int finalPrio = - player.CalculateCardDamage() +
-                        player.OpposingPlayer.CalculateCardDamage() +
+                        (int)(player.OpposingPlayer.CalculateCardDamage() * 2f) +
                         cardWeight * player.OpposingPlayer.TableCardsCount();
         
         return finalPrio < 0 ? 0 : finalPrio;

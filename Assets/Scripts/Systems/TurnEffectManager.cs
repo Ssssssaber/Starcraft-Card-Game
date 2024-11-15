@@ -37,6 +37,8 @@ public class TurnEffectManager
     }
     private void ImplementTurnEffects(ref List<TurnEffect> effects)
     {
+        if (effects.Count == 0) return;
+        
         List<TurnEffect> expiredEffects = new List<TurnEffect>();
         foreach (var effect in effects)
         {
@@ -44,7 +46,7 @@ public class TurnEffectManager
             {
                 case (1):
                     effect.ImplementMethod();
-                    // Debug.Log($"EffectName: {effect.GetDesc()} : {effect.Duration}");
+                    Debug.Log($"EffectName: {effect.GetDesc()} : {effect.Duration}");
                     expiredEffects.Add(effect);
                     break;
                 case (0):

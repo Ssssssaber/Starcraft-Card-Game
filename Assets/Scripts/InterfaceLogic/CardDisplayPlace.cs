@@ -11,7 +11,7 @@ namespace DefaultNamespace
         private AbstractFactory _opponentFactory;
         private BoardAwareness _awareness;
         private Flyweight.Flyweight _flyweight;
-        private void Start()
+        public void Init()
         {
             _awareness = BoardAwareness.Instance;
             _playerFactory = AssignFactory(_awareness.player.Race);

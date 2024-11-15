@@ -35,4 +35,9 @@ public class ActionGoFace : ActionBase
     {
         StartCoroutine(_oppBehaviour.GoFace());
     }
+
+    public override bool getIsAggressive()
+    {
+        return true;
+    }
 }

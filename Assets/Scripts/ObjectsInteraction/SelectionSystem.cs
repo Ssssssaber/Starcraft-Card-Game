@@ -59,7 +59,7 @@ public class SelectionSystem : MonoBehaviour
             Destroy(this);
         }
     }
-    private void Start()
+    public void Init()
     {
         _awareness = BoardAwareness.Instance;
         Canvas = GameObject.Find("Main Canvas");
